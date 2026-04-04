@@ -599,28 +599,45 @@ Hormat kami,
                                 </div>
                             </div>
 
-                            <!-- 5. GALLERY (Multiple) -->
-                            <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-xl lg:col-span-2">
-                                <h3 class="font-bold text-lg mb-4 flex items-center gap-3">
-                                    <span class="w-8 h-8 rounded-xl bg-cyan-100 text-cyan-600 flex items-center justify-center text-xs">05</span>
-                                    Galeri Foto
+                            <!-- 5. GALLERY (Full Width at Bottom) -->
+                            <div class="bg-white p-8 rounded-3xl border border-gray-100 shadow-xl lg:col-span-3 mt-4 overflow-hidden relative">
+                                <div class="absolute top-0 right-0 w-32 h-32 bg-cyan-50 rounded-full -mr-16 -mt-16 opacity-30"></div>
+                                <h3 class="font-bold text-xl mb-6 flex items-center gap-3 relative z-10">
+                                    <span class="w-10 h-10 rounded-2xl bg-cyan-600 text-white flex items-center justify-center text-sm shadow-lg shadow-cyan-100">05</span>
+                                    Galeri Foto Koleksi (Tampilan Besar)
                                 </h3>
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                                    <div class="border-2 border-dashed border-cyan-100 rounded-2xl p-6 text-center hover:bg-cyan-50/50 transition-all cursor-pointer relative h-24 flex flex-col justify-center">
-                                        <input type="file" name="gallery_files[]" multiple class="absolute inset-0 opacity-0 cursor-pointer" @change="handleFile($event, 'gallery')">
-                                        <svg class="w-6 h-6 mx-auto mb-2 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                                        <span class="text-[10px] font-bold text-cyan-600 uppercase">Tambah Foto Galeri</span>
-                                    </div>
-                                    <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3 overflow-y-auto max-h-96 p-2 bg-gray-50/50 rounded-2xl border border-gray-100">
-                                        <template x-for="(img, idx) in gallery_images" :key="img">
-                                            <div class="relative aspect-square rounded-xl overflow-hidden group border-2 border-white shadow-md hover:border-cyan-400 transition-all">
-                                                <img :src="img" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                                                <button type="button" @click="removeGallery(idx)" class="absolute inset-0 bg-red-600/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[1px]">
-                                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                                                </button>
-                                                <input type="hidden" name="gallery_images[]" :value="img">
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                                    <!-- Upload Button Area -->
+                                    <div class="md:col-span-1">
+                                        <div class="border-2 border-dashed border-cyan-200 rounded-[2rem] p-8 text-center hover:bg-cyan-50/50 transition-all cursor-pointer relative h-full flex flex-col items-center justify-center bg-gray-50/30 group">
+                                            <input type="file" name="gallery_files[]" multiple class="absolute inset-0 opacity-0 cursor-pointer" @change="handleFile($event, 'gallery')">
+                                            <div class="w-16 h-16 bg-white text-cyan-500 rounded-2xl flex items-center justify-center mb-4 shadow-sm group-hover:scale-110 transition-transform">
+                                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                                             </div>
-                                        </template>
+                                            <p class="text-xs font-black text-cyan-600 uppercase tracking-widest">Tambah Foto</p>
+                                            <p class="text-[10px] text-gray-400 mt-2">Bisa pilih banyak sekaligus Bos</p>
+                                        </div>
+                                    </div>
+
+                                    <!-- Grid Gallery (Jumbo) -->
+                                    <div class="md:col-span-3">
+                                        <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4 overflow-y-auto max-h-[500px] pr-2 custom-scrollbar">
+                                            <template x-for="(img, idx) in gallery_images" :key="img">
+                                                <div class="relative aspect-[3/4] rounded-[1.5rem] overflow-hidden group border-4 border-white shadow-lg hover:shadow-cyan-200 transition-all duration-300">
+                                                    <img :src="img" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                                                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end justify-center pb-4">
+                                                        <button type="button" @click="removeGallery(idx)" class="w-10 h-10 bg-red-500 text-white rounded-full flex items-center justify-center shadow-2xl hover:bg-red-600 transition-colors transform translate-y-4 group-hover:translate-y-0 duration-300">
+                                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                                        </button>
+                                                    </div>
+                                                    <input type="hidden" name="gallery_images[]" :value="img">
+                                                </div>
+                                            </template>
+                                            <div x-show="gallery_images.length === 0" class="col-span-full py-20 text-center bg-gray-50 rounded-[2rem] border-2 border-dashed border-gray-100 text-gray-300 italic">
+                                                Belum ada foto galeri Bos...
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
