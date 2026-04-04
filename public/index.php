@@ -1,31 +1,51 @@
 <?php
 
-use Illuminate\Foundation\Application;
-use Illuminate\Http\Request;
+/**
+ * 🛠 DIAGNOSTIC MODE: Vercel Laravel Session
+ */
 
-define('LARAVEL_START', microtime(true));
+// Force text mode to see what's happening
+header('Content-Type: text/plain');
 
-// Determine if the application is in maintenance mode...
-if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php')) {
-    require $maintenance;
-}
+echo "--- VERCEL DIAGNOSTIC START ---\n";
+echo "PHP Version: " . phpversion() . "\n";
+echo "Working Directory: " . getcwd() . "\n";
+echo "App Key Exists: " . (getenv('APP_KEY') ?: 'NO (Please check Vercel Env Vars)') . "\n";
 
-// Ensure storage folders exist in /tmp for Vercel
-if (isset($_SERVER['VERCEL_URL'])) {
-    if (!getenv('APP_KEY') && !isset($_ENV['APP_KEY'])) {
-        die("Error: APP_KEY is not defined in Vercel Environment Variables. Please check your Project Settings.");
+// Ensure storage folders exist in /tmp
+$storageFolders = [
+    '/tmp/storage/framework/views',
+    '/tmp/storage/framework/cache',
+    '/tmp/storage/framework/sessions',
+    '/tmp/storage/logs',
+];
+
+foreach ($storageFolders as $folder) {
+    if (!is_dir($folder)) {
+        if (mkdir($folder, 0777, true)) {
+            echo "Created: $folder\n";
+        }
     }
-    $storageFolders = ['/tmp/storage/framework/views', '/tmp/storage/framework/cache', '/tmp/storage/framework/sessions', '/tmp/storage/logs'];
-    foreach ($storageFolders as $folder) { if (!is_dir($folder)) mkdir($folder, 0777, true); }
-    putenv('VIEW_COMPILED_PATH=/tmp/storage/framework/views');
-    putenv('SESSION_DRIVER=cookie');
 }
+
+// Force Serverless Overrides
+putenv('VIEW_COMPILED_PATH=/tmp/storage/framework/views');
+putenv('SESSION_DRIVER=cookie');
+putenv('APP_DEBUG=true');
+
+echo "--- LOADING LARAVEL ---\n";
 
 // Register the Composer autoloader...
+if (!file_exists(__DIR__.'/../vendor/autoload.php')) {
+    die("CRITICAL ERROR: vendor/autoload.php not found. Vercel builder failed to run composer.");
+}
 require __DIR__.'/../vendor/autoload.php';
 
 // Bootstrap Laravel and handle the request...
-/** @var Application $app */
 $app = require_once __DIR__.'/../bootstrap/app.php';
 
-$app->handleRequest(Request::capture());
+echo "Laravel Application Booted.\n";
+echo "--- DIAGNOSTIC END ---\n";
+
+// Now try to handle request
+$app->handleRequest(Illuminate\Http\Request::capture());
