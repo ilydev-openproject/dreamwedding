@@ -17,9 +17,9 @@
     
     <!-- SEO & WhatsApp Shared Preview -->
     @php
-        $shareImage = ($data['hero_images'][0] ?? null);
-        if ($shareImage && !str_starts_with($shareImage, 'http')) {
-            $shareImage = asset($shareImage);
+        $shareImage = ($data['hero_images'][0] ?? 'https://sesarengan.my.id/images/default-share.jpg');
+        if (!empty($shareImage) && !str_starts_with($shareImage, 'http')) {
+            $shareImage = url($shareImage);
         }
     @endphp
 
