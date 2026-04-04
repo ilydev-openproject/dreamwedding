@@ -256,7 +256,7 @@ Hormat kami,
                         </div>
                     @endif
 
-                    <form id="main-form" :action="'{{ route('dashboard.update', $invitation->access_token) }}#' + activeTab" method="POST" class="space-y-8">
+                    <form id="main-form" :action="'{{ route('dashboard.update', $invitation->access_token) }}#' + activeTab" method="POST" enctype="multipart/form-data" class="space-y-8">
                         @csrf
                         
                         <!-- TAB: PROFIL -->
@@ -420,19 +420,56 @@ Hormat kami,
 
                         <!-- TAB: MEDIA -->
                         <div x-show="activeTab === 'media'" class="space-y-6">
-                            <div class="bg-gray-50 p-6 rounded-2xl border border-gray-100">
-                                <h3 class="font-bold text-lg mb-4 text-gray-900 flex items-center">
-                                    <span class="w-8 h-8 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center mr-3 text-sm">#5</span>
-                                    Foto Latar Belakang (Hero)
-                                </h3>
-                                <textarea name="hero_images" rows="4" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="https://... photo1.jpg">{{ isset($invitation->content['hero_images']) ? implode("\n", $invitation->content['hero_images']) : '' }}</textarea>
+                            <!-- Hero Images -->
+                            <div class="bg-gray-50 p-6 rounded-2xl border border-gray-100 shadow-sm">
+                                <div class="flex justify-between items-center mb-6">
+                                    <h3 class="font-bold text-lg text-gray-900 flex items-center">
+                                        <span class="w-8 h-8 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center mr-3 text-sm font-bold">05</span>
+                                        Foto Latar Belakang (Hero)
+                                    </h3>
+                                </div>
+                                <div class="space-y-4">
+                                    <div class="border-2 border-dashed border-gray-200 rounded-2xl p-8 text-center hover:bg-white hover:border-rose-300 transition-all group bg-white/50">
+                                        <input type="file" name="hero_files[]" multiple accept="image/*" class="hidden" id="hero_upload">
+                                        <label for="hero_upload" class="cursor-pointer">
+                                            <div class="w-12 h-12 bg-rose-50 text-rose-500 rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
+                                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                            </div>
+                                            <p class="text-sm font-bold text-gray-700">Klik untuk Upload Foto Hero</p>
+                                            <p class="text-xs text-gray-400 mt-1">Bisa pilih banyak foto sekaligus (JPG, PNG)</p>
+                                        </label>
+                                    </div>
+                                    <div class="bg-indigo-50/50 p-4 rounded-xl border border-indigo-100">
+                                        <p class="text-[10px] font-bold text-indigo-400 uppercase mb-2">Atau masukkan Link Manual (Satu per baris):</p>
+                                        <textarea name="hero_images" rows="3" class="w-full bg-white border border-gray-200 rounded-lg px-4 py-2 focus:ring-2 focus:ring-rose-500 outline-none text-sm font-mono" placeholder="https://... photo1.jpg">{{ isset($invitation->content['hero_images']) ? implode("\n", $invitation->content['hero_images']) : '' }}</textarea>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="bg-gray-50 p-6 rounded-2xl border border-gray-100">
-                                <h3 class="font-bold text-lg mb-4 text-gray-900 flex items-center">
-                                    <span class="w-8 h-8 rounded-full bg-cyan-100 text-cyan-600 flex items-center justify-center mr-3 text-sm">#6</span>
-                                    Galeri Foto
-                                </h3>
-                                <textarea name="gallery_images" rows="5" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="https://... galeri1.jpg">{{ isset($invitation->content['gallery']) ? implode("\n", $invitation->content['gallery']) : '' }}</textarea>
+
+                            <!-- Gallery Images -->
+                            <div class="bg-gray-50 p-6 rounded-2xl border border-gray-100 shadow-sm">
+                                <div class="flex justify-between items-center mb-6">
+                                    <h3 class="font-bold text-lg text-gray-900 flex items-center">
+                                        <span class="w-8 h-8 rounded-full bg-cyan-100 text-cyan-600 flex items-center justify-center mr-3 text-sm font-bold">06</span>
+                                        Galeri Foto Undangan
+                                    </h3>
+                                </div>
+                                <div class="space-y-4">
+                                    <div class="border-2 border-dashed border-gray-200 rounded-2xl p-8 text-center hover:bg-white hover:border-cyan-300 transition-all group bg-white/50">
+                                        <input type="file" name="gallery_files[]" multiple accept="image/*" class="hidden" id="gallery_upload">
+                                        <label for="gallery_upload" class="cursor-pointer">
+                                            <div class="w-12 h-12 bg-cyan-50 text-cyan-500 rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
+                                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                                            </div>
+                                            <p class="text-sm font-bold text-gray-700">Klik untuk Upload Galeri</p>
+                                            <p class="text-xs text-gray-400 mt-1">Disarankan upload minimal 6 foto</p>
+                                        </label>
+                                    </div>
+                                    <div class="bg-indigo-50/50 p-4 rounded-xl border border-indigo-100">
+                                        <p class="text-[10px] font-bold text-indigo-400 uppercase mb-2">Atau masukkan Link Manual (Satu per baris):</p>
+                                        <textarea name="gallery_images" rows="3" class="w-full bg-white border border-gray-200 rounded-lg px-4 py-2 focus:ring-2 focus:ring-cyan-500 outline-none text-sm font-mono" placeholder="https://... galeri1.jpg">{{ isset($invitation->content['gallery']) ? implode("\n", $invitation->content['gallery']) : '' }}</textarea>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 

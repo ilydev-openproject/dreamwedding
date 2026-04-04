@@ -78,16 +78,32 @@ class DashboardController extends Controller
             ];
         }
 
-        // Hero Images
+        // Hero Images (Uploads + Manual)
+        if ($request->hasFile('hero_files')) {
+            if (!isset($content['hero_images'])) $content['hero_images'] = [];
+            foreach ($request->file('hero_files') as $file) {
+                $path = $file->store('invitations/hero', 'public');
+                $content['hero_images'][] = asset('storage/' . $path);
+            }
+        }
         if ($request->filled('hero_images')) {
             $images = preg_split('/\r\n|\r|\n/', $request->input('hero_images'));
-            $content['hero_images'] = array_values(array_filter($images));
+            $merged_hero = array_merge($content['hero_images'] ?? [], array_values(array_filter($images)));
+            $content['hero_images'] = array_values(array_unique($merged_hero));
         }
 
-        // Gallery Images
+        // Gallery Images (Uploads + Manual)
+        if ($request->hasFile('gallery_files')) {
+            if (!isset($content['gallery'])) $content['gallery'] = [];
+            foreach ($request->file('gallery_files') as $file) {
+                $path = $file->store('invitations/gallery', 'public');
+                $content['gallery'][] = asset('storage/' . $path);
+            }
+        }
         if ($request->filled('gallery_images')) {
             $gallery = preg_split('/\r\n|\r|\n/', $request->input('gallery_images'));
-            $content['gallery'] = array_values(array_filter($gallery));
+            $merged_gallery = array_merge($content['gallery'] ?? [], array_values(array_filter($gallery)));
+            $content['gallery'] = array_values(array_unique($merged_gallery));
         }
 
         // Guest List (New)
