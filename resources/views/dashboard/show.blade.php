@@ -126,7 +126,7 @@
                 const bride = @json($invitation->content['bride']['name'] ?? 'Bride');
                 const groom = @json($invitation->content['groom']['name'] ?? 'Groom');
                 
-                const message = `*💌 UNDANGAN 💌*
+                const message = `*\u{1F48C} UNDANGAN PERNIKAHAN \u{1F48C}*
 
 *Kepada Yth.*
 *Bapak/Ibu/Saudara/i*
