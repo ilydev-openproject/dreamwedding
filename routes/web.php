@@ -1,3 +1,11 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\InvitationController;
+use App\Http\Controllers\RsvpController;
+
 // Emergency Storage Link (For Hostinger/Vercel)
 Route::get('/fix-storage', function () {
     $target = storage_path('app/public');
@@ -17,10 +25,6 @@ Route::get('/fix-storage', function () {
         return "Gagal membuat link. Coba hapus folder 'public/storage' di File Manager Hostinger lalu buka lagi link ini.";
     }
 });
-use App\Http\Controllers\AdminController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\InvitationController;
-use App\Http\Controllers\RsvpController;
 
 // Web root
 Route::get('/', function () {
@@ -35,7 +39,7 @@ Route::get('/admin/settings', [AdminController::class, 'settings'])->name('admin
 Route::post('/admin/invitations', [AdminController::class, 'store'])->name('admin.store');
 Route::put('/admin/clients/{id}/theme', [AdminController::class, 'updateTheme'])->name('admin.updateTheme');
 
-// For Customer Dashboard using Magic Link Token
+// For Customer Dashboard
 Route::get('/dashboard/{token}', [DashboardController::class, 'show'])->name('dashboard.show');
 Route::post('/dashboard/{token}', [DashboardController::class, 'update'])->name('dashboard.update');
 
