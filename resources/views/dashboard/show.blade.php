@@ -61,7 +61,8 @@
             guests: @json($invitation->content['guests'] ?? []),
             cover_image: "{{ $invitation->content['cover_image'] ?? '' }}",
             groom_image: @json($invitation->content['groom']['image'] ?? ''),
-            bride_image: @json($invitation->content['bride']['image'] ?? ''),
+            bride_image: '{{ $invitation->content['bride']['image'] ?? '' }}',
+            og_image: '{{ $invitation->content['og_image'] ?? '' }}',
             hero_images: @json($invitation->content['hero_images'] ?? []),
             gallery_images: @json($invitation->content['gallery'] ?? []),
             
@@ -70,6 +71,7 @@
             coverPreview: null,
             groomPreview: null,
             bridePreview: null,
+            ogPreview: null,
             isUploading: false,
             
             newName: '',
@@ -87,6 +89,7 @@
                 if (type === 'cover') this.coverPreview = URL.createObjectURL(files[0]);
                 if (type === 'groom') this.groomPreview = URL.createObjectURL(files[0]);
                 if (type === 'bride') this.bridePreview = URL.createObjectURL(files[0]);
+                if (type === 'og') this.ogPreview = URL.createObjectURL(files[0]);
                 
                 if (type === 'hero' || type === 'gallery') {
                     const previews = [];
@@ -604,6 +607,26 @@ Hormat kami,
                                             <div class="col-span-full py-8 text-center text-[10px] text-gray-300 italic">Belum ada slideshow Bos...</div>
                                         </template>
                                     </div>
+                                </div>
+                            </div>
+
+                            <!-- 6. OG IMAGE (Thumbnail Share) -->
+                            <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-xl flex flex-col">
+                                <h3 class="font-bold text-lg mb-4 flex items-center gap-3">
+                                    <span class="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs">06</span>
+                                    OG Image (WA/FB Preview)
+                                </h3>
+                                <div class="flex-1 space-y-4">
+                                    <div class="relative group aspect-[1.91/1] rounded-2xl overflow-hidden bg-gray-50 border-2 border-dashed border-gray-200">
+                                        <img :src="ogPreview || og_image || 'https://via.placeholder.com/600x315?text=Share+Preview'" class="w-full h-full object-cover">
+                                        <input type="file" name="og_file" class="hidden" id="og_upload" @change="handleFile($event, 'og')">
+                                        <label for="og_upload" class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center cursor-pointer text-white">
+                                            <svg class="w-8 h-8 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                            <span class="text-xs font-bold font-poppins capitalize">Ganti Thumbnail</span>
+                                        </label>
+                                    </div>
+                                    <input type="text" name="og_image" x-model="og_image" class="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-2 text-[10px] font-mono outline-none focus:ring-2 focus:ring-emerald-500" placeholder="Atau Link URL Preview...">
+                                    <p class="text-[9px] text-gray-400 italic text-center">Rasio ideal 1.91:1 (cth: 1200x630px)</p>
                                 </div>
                             </div>
 

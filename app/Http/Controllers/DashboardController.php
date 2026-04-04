@@ -99,6 +99,13 @@ class DashboardController extends Controller
             $content['bride']['image'] = asset('storage/' . $path);
         }
 
+        // OG Image (Share Thumbnail)
+        $content['og_image'] = $request->input('og_image', $content['og_image'] ?? null);
+        if ($request->hasFile('og_file')) {
+            $path = $request->file('og_file')->store('invitations/og', 'public');
+            $content['og_image'] = asset('storage/' . $path);
+        }
+
         // 4. Slideshow Images (Multiple Array)
         $current_slideshow = $request->input('slideshow_images', []);
         if ($request->hasFile('slideshow_files')) {
