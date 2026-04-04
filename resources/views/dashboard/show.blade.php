@@ -8,6 +8,48 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Alpine.js -->
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        [x-cloak] { display: none !important; }
+        
+        /* Premium Liquid Fill Animation */
+        .liquid-container {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 4px solid #fff;
+            overflow: hidden;
+            background: #f3f4f6;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        .liquid-wave {
+            position: absolute;
+            top: 100%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%);
+            border-radius: 40%;
+            animation: rotate_wave 4s linear infinite;
+            transition: top 3s ease-out;
+        }
+        .liquid-filling .liquid-wave {
+            top: 10%;
+        }
+        @keyframes rotate_wave {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .animate-bounce-in {
+            animation: bounceIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        @keyframes bounceIn {
+            0% { opacity: 0; transform: scale(0.3); }
+            50% { opacity: 1; transform: scale(1.05); }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); }
+        }
+    </style>
 </head>
 <script>
     function dashboardData() {
@@ -419,55 +461,114 @@ Hormat kami,
                         </div>
 
                         <!-- TAB: MEDIA -->
-                        <div x-show="activeTab === 'media'" class="space-y-6">
-                            <!-- Hero Images -->
-                            <div class="bg-gray-50 p-6 rounded-2xl border border-gray-100 shadow-sm">
-                                <div class="flex justify-between items-center mb-6">
-                                    <h3 class="font-bold text-lg text-gray-900 flex items-center">
-                                        <span class="w-8 h-8 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center mr-3 text-sm font-bold">05</span>
-                                        Foto Latar Belakang (Hero)
-                                    </h3>
+                        <div x-show="activeTab === 'media'" class="space-y-8" 
+                             x-data="{ 
+                                heroPreviews: [], 
+                                galleryPreviews: [],
+                                isUploading: false,
+                                handleFile(event, type) {
+                                    const files = event.target.files;
+                                    const previews = [];
+                                    for (let i = 0; i < files.length; i++) {
+                                        previews.push(URL.createObjectURL(files[i]));
+                                    }
+                                    if(type === 'hero') this.heroPreviews = previews;
+                                    if(type === 'gallery') this.galleryPreviews = previews;
+                                }
+                             }" @submit="isUploading = true">
+                            
+                            <!-- Liquid Loader Overlay -->
+                            <div x-show="isUploading" x-transition x-cloak class="fixed inset-0 bg-white/80 backdrop-blur-md z-[100] flex flex-col items-center justify-center">
+                                <div class="liquid-container liquid-filling mb-4">
+                                    <div class="liquid-wave"></div>
                                 </div>
-                                <div class="space-y-4">
-                                    <div class="border-2 border-dashed border-gray-200 rounded-2xl p-8 text-center hover:bg-white hover:border-rose-300 transition-all group bg-white/50">
-                                        <input type="file" name="hero_files[]" multiple accept="image/*" class="hidden" id="hero_upload">
-                                        <label for="hero_upload" class="cursor-pointer">
-                                            <div class="w-12 h-12 bg-rose-50 text-rose-500 rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
-                                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                                            </div>
-                                            <p class="text-sm font-bold text-gray-700">Klik untuk Upload Foto Hero</p>
-                                            <p class="text-xs text-gray-400 mt-1">Bisa pilih banyak foto sekaligus (JPG, PNG)</p>
-                                        </label>
+                                <p class="text-blue-600 font-bold animate-pulse">Sedang Mengisi Air... (Mengunggah Foto)</p>
+                            </div>
+
+                            <!-- Hero Images Section -->
+                            <div class="bg-white p-8 rounded-3xl border border-gray-100 shadow-xl overflow-hidden relative">
+                                <div class="absolute top-0 right-0 w-32 h-32 bg-rose-50 rounded-full -mr-16 -mt-16 opacity-50"></div>
+                                <div class="relative z-10">
+                                    <div class="flex justify-between items-center mb-8">
+                                        <h3 class="font-black text-2xl text-gray-900 flex items-center">
+                                            <span class="w-10 h-10 rounded-2xl bg-rose-600 text-white flex items-center justify-center mr-4 shadow-lg shadow-rose-200">05</span>
+                                            Foto Latar Belakang (Hero)
+                                        </h3>
                                     </div>
-                                    <div class="bg-indigo-50/50 p-4 rounded-xl border border-indigo-100">
-                                        <p class="text-[10px] font-bold text-indigo-400 uppercase mb-2">Atau masukkan Link Manual (Satu per baris):</p>
-                                        <textarea name="hero_images" rows="3" class="w-full bg-white border border-gray-200 rounded-lg px-4 py-2 focus:ring-2 focus:ring-rose-500 outline-none text-sm font-mono" placeholder="https://... photo1.jpg">{{ isset($invitation->content['hero_images']) ? implode("\n", $invitation->content['hero_images']) : '' }}</textarea>
+                                    
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <!-- Upload Box -->
+                                        <div class="border-2 border-dashed border-rose-200 rounded-3xl p-10 text-center hover:bg-rose-50/30 hover:border-rose-400 transition-all group bg-gray-50/50">
+                                            <input type="file" name="hero_files[]" multiple accept="image/*" class="hidden" id="hero_upload" @change="handleFile($event, 'hero')">
+                                            <label for="hero_upload" class="cursor-pointer">
+                                                <div class="w-16 h-16 bg-white text-rose-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-md group-hover:rotate-12 transition-transform">
+                                                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                                </div>
+                                                <p class="font-bold text-gray-800 text-lg">Pilih Foto Utama</p>
+                                                <p class="text-xs text-gray-400 mt-1">Tap untuk mencari di galeri</p>
+                                            </label>
+                                        </div>
+
+                                        <!-- Preview Grid -->
+                                        <div class="flex flex-wrap gap-3 items-start content-start min-h-[150px] bg-gray-50 rounded-3xl p-4 border border-gray-100">
+                                            <template x-for="url in heroPreviews">
+                                                <div class="w-24 h-24 rounded-xl overflow-hidden shadow-md ring-4 ring-white relative group animate-bounce-in">
+                                                    <img :src="url" class="w-full h-full object-cover">
+                                                    <div class="absolute inset-0 bg-rose-600/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                                        <span class="text-[10px] text-white font-bold px-2 py-1 bg-black/20 rounded-full">Baru</span>
+                                                    </div>
+                                                </div>
+                                            </template>
+                                            <p x-show="heroPreviews.length === 0" class="text-xs text-gray-300 italic self-center mx-auto">Foto yang akan diupload tampil di sini...</p>
+                                        </div>
+                                    </div>
+
+                                    <!-- URL Fallback -->
+                                    <div class="mt-8 pt-8 border-t border-gray-100">
+                                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">Daftar Link Foto Aktif (URL):</p>
+                                        <textarea name="hero_images" rows="2" class="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 focus:ring-2 focus:ring-rose-500 outline-none text-xs font-mono text-gray-600 transition-all" placeholder="Masukkan URL jika tidak via upload...">{{ isset($invitation->content['hero_images']) ? implode("\n", $invitation->content['hero_images']) : '' }}</textarea>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Gallery Images -->
-                            <div class="bg-gray-50 p-6 rounded-2xl border border-gray-100 shadow-sm">
-                                <div class="flex justify-between items-center mb-6">
-                                    <h3 class="font-bold text-lg text-gray-900 flex items-center">
-                                        <span class="w-8 h-8 rounded-full bg-cyan-100 text-cyan-600 flex items-center justify-center mr-3 text-sm font-bold">06</span>
-                                        Galeri Foto Undangan
-                                    </h3>
-                                </div>
-                                <div class="space-y-4">
-                                    <div class="border-2 border-dashed border-gray-200 rounded-2xl p-8 text-center hover:bg-white hover:border-cyan-300 transition-all group bg-white/50">
-                                        <input type="file" name="gallery_files[]" multiple accept="image/*" class="hidden" id="gallery_upload">
-                                        <label for="gallery_upload" class="cursor-pointer">
-                                            <div class="w-12 h-12 bg-cyan-50 text-cyan-500 rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
-                                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                                            </div>
-                                            <p class="text-sm font-bold text-gray-700">Klik untuk Upload Galeri</p>
-                                            <p class="text-xs text-gray-400 mt-1">Disarankan upload minimal 6 foto</p>
-                                        </label>
+                            <!-- Gallery Section -->
+                            <div class="bg-white p-8 rounded-3xl border border-gray-100 shadow-xl overflow-hidden relative">
+                                <div class="absolute top-0 left-0 w-32 h-32 bg-cyan-50 rounded-full -ml-16 -mt-16 opacity-50"></div>
+                                <div class="relative z-10">
+                                    <div class="flex justify-between items-center mb-8">
+                                        <h3 class="font-black text-2xl text-gray-900 flex items-center">
+                                            <span class="w-10 h-10 rounded-2xl bg-cyan-600 text-white flex items-center justify-center mr-4 shadow-lg shadow-cyan-200">06</span>
+                                            Galeri Foto Undangan
+                                        </h3>
                                     </div>
-                                    <div class="bg-indigo-50/50 p-4 rounded-xl border border-indigo-100">
-                                        <p class="text-[10px] font-bold text-indigo-400 uppercase mb-2">Atau masukkan Link Manual (Satu per baris):</p>
-                                        <textarea name="gallery_images" rows="3" class="w-full bg-white border border-gray-200 rounded-lg px-4 py-2 focus:ring-2 focus:ring-cyan-500 outline-none text-sm font-mono" placeholder="https://... galeri1.jpg">{{ isset($invitation->content['gallery']) ? implode("\n", $invitation->content['gallery']) : '' }}</textarea>
+
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <!-- Upload Box -->
+                                        <div class="border-2 border-dashed border-cyan-200 rounded-3xl p-10 text-center hover:bg-cyan-50/30 hover:border-cyan-400 transition-all group bg-gray-50/50">
+                                            <input type="file" name="gallery_files[]" multiple accept="image/*" class="hidden" id="gallery_upload" @change="handleFile($event, 'gallery')">
+                                            <label for="gallery_upload" class="cursor-pointer">
+                                                <div class="w-16 h-16 bg-white text-cyan-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-md group-hover:rotate-12 transition-transform">
+                                                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4"></path></svg>
+                                                </div>
+                                                <p class="font-bold text-gray-800 text-lg">Pilih Galeri Foto</p>
+                                                <p class="text-xs text-gray-400 mt-1">Upload foto-foto momen indah berdua</p>
+                                            </label>
+                                        </div>
+
+                                        <!-- Preview Grid -->
+                                        <div class="flex flex-wrap gap-3 items-start content-start min-h-[150px] bg-gray-50 rounded-3xl p-4 border border-gray-100">
+                                            <template x-for="url in galleryPreviews">
+                                                <div class="w-20 h-20 rounded-xl overflow-hidden shadow-md ring-4 ring-white relative animate-bounce-in">
+                                                    <img :src="url" class="w-full h-full object-cover">
+                                                </div>
+                                            </template>
+                                            <p x-show="galleryPreviews.length === 0" class="text-xs text-gray-300 italic self-center mx-auto">Foto galeri baru muncul di sini...</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="mt-8 pt-8 border-t border-gray-100">
+                                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">Daftar Link Galeri Aktif (URL):</p>
+                                        <textarea name="gallery_images" rows="2" class="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 focus:ring-2 focus:ring-cyan-500 outline-none text-xs font-mono text-gray-600 transition-all" placeholder="Masukkan URL galeri...">{{ isset($invitation->content['gallery']) ? implode("\n", $invitation->content['gallery']) : '' }}</textarea>
                                     </div>
                                 </div>
                             </div>
