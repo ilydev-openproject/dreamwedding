@@ -137,7 +137,8 @@
     </div>
 
     <!-- Cover Page (Sampul) -->
-    <div :class="open ? 'cover-slide-up' : ''" class="fixed inset-y-0 left-1/2 -translate-x-1/2 z-[60] w-full max-w-[480px] flex flex-col items-center justify-center text-center px-6 overflow-hidden bg-cover bg-center" style="background-image: url('{{ asset('img/hero/WhatsApp%20Image%202026-03-.jpeg') }}')">
+    <div :class="open ? 'cover-slide-up' : ''" class="fixed inset-y-0 left-1/2 -translate-x-1/2 z-[60] w-full max-w-[480px] flex flex-col items-center justify-center text-center px-6 overflow-hidden bg-cover bg-center" 
+         :style="'background-image: url(\'{{ $data['cover_image'] ?? ($data['hero_images'][0] ?? 'https://via.placeholder.com/600x800?text=Wedding+Cover') }}\')'">
         <div class="absolute inset-0 bg-black/40"></div>
         <div class="relative z-10 flex flex-col items-center">
             <h1 class="font-poppins text-[#ECAA6D] text-[42px] font-semibold px-4 tracking-[-2.5px] text-transform: capitalize">
@@ -166,25 +167,29 @@
         <!-- Section 1 : Hero -->
         <section x-data='{ 
                 currentSlide: 0, 
-                images: @json($hero_images),
+                images: @json($data['hero_images'] ?? []),
                 init() { 
-                    setInterval(() => { this.currentSlide = (this.currentSlide + 1) % this.images.length }, 4000) 
+                    if(this.images.length > 0) {
+                        setInterval(() => { this.currentSlide = (this.currentSlide + 1) % this.images.length }, 4000) 
+                    }
                 } 
             }' 
             class="relative h-screen flex flex-col items-start justify-end px-6 pb-20 text-left snap-start overflow-hidden bg-dark">
             
             <!-- Slideshow -->
-            <template x-for="(img, index) in images" :key="index">
-                <div class="hero-slide" 
-                     x-show="currentSlide === index"
-                     x-transition:enter="transition ease-out duration-[3000ms]"
-                     x-transition:enter-start="opacity-0"
-                     x-transition:enter-end="opacity-100"
-                     x-transition:leave="transition ease-in duration-[3000ms]"
-                     x-transition:leave-start="opacity-100"
-                     x-transition:leave-end="opacity-0"
-                     :style="'background-image: url(\'' + img + '\')'" 
-                     class="absolute inset-0 bg-cover bg-center"></div>
+            <template x-if="images.length > 0">
+                <template x-for="(img, index) in images" :key="index">
+                    <div class="hero-slide" 
+                         x-show="currentSlide === index"
+                         x-transition:enter="transition ease-out duration-[3000ms]"
+                         x-transition:enter-start="opacity-0"
+                         x-transition:enter-end="opacity-100"
+                         x-transition:leave="transition ease-in duration-[3000ms]"
+                         x-transition:leave-start="opacity-100"
+                         x-transition:leave-end="opacity-0"
+                         :style="'background-image: url(\'' + img + '\')'" 
+                         class="absolute inset-0 bg-cover bg-center"></div>
+                </template>
             </template>
             <!-- Large Bubbles -->
             <div class="bubble w-64 h-64 -top-10 -left-10 opacity-60"></div>
@@ -206,7 +211,7 @@
 
         <!-- Section 2 : Profil Mempelai (Groom) -->
         <section class="relative h-screen flex flex-col items-start justify-end px-6 pb-24 text-left snap-start overflow-hidden bg-cover bg-center" 
-                 style="background-image: url('{{ asset('img/hero/WhatsApp%20Image%202026-03-26%20at%2021.13.33%20(2).jpeg') }}')">
+                 style="background-image: url('{{ $data['groom']['image'] ?? 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80' }}')">
             <div class="absolute inset-0 bg-black/60"></div>
             <div class="relative z-10 max-w-2xl content-z">
                 <h4 class="mb-4 font-poppins text-[35px] font-semibold capitalize tracking-[-2px] text-white leading-[1.1]" data-aos="fade-right" data-aos-delay="400" data-aos-duration="2500">
@@ -224,7 +229,7 @@
 
         <!-- Section 2.5 : Profil Mempelai (Bride) -->
         <section class="relative h-screen flex flex-col items-end justify-end px-6 pb-24 text-right snap-start overflow-hidden bg-cover bg-center" 
-                 style="background-image: url('{{ asset('img/hero/WhatsApp%20Image%202026-03-26%20at%2021.13.33.jpeg') }}')">
+                 style="background-image: url('{{ $data['bride']['image'] ?? 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80' }}')">
             <div class="absolute inset-0 bg-black/60"></div>
             <div class="relative z-10 max-w-2xl content-z">
                 <h4 class="mb-4 font-poppins text-[35px] font-semibold capitalize tracking-[-2px] text-white leading-[1.1]" data-aos="fade-left" data-aos-delay="400" data-aos-duration="2500">
@@ -301,7 +306,7 @@
 
         <!-- Section 3 : Detil Acara -->
         <section class="relative min-h-screen flex flex-col items-center justify-start py-20 px-6 snap-start overflow-hidden bg-cover bg-center" 
-                 style="background-image: url('{{ asset('img/hero/WhatsApp%20Image%202026-03-26%20at%2021.13.32.jpeg') }}')">
+                 style="background-image: url('{{ $data['cover_image'] ?? 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&q=80' }}')">
             <div class="absolute inset-0 bg-black/80"></div>
             
             <div class="relative z-10 w-full max-w-2xl translate-z" data-aos="fade-up">
@@ -397,7 +402,7 @@
         <section class="min-h-screen flex flex-col justify-start pt-24 pb-12 px-6 relative z-10 bg-[#0a0a0a]/80 snap-start content-z">
             <!-- Background Gallery (Blurred) -->
             <div class="absolute inset-0 z-0 opacity-20 blur-xl scale-110 pointer-events-none">
-                <img src="{{ asset('img/hero/WhatsApp%20Image%202026-03-.jpeg') }}" class="w-full h-full object-cover">
+                <img src="{{ $data['cover_image'] ?? ($data['gallery'][0] ?? 'https://via.placeholder.com/600x800') }}" class="w-full h-full object-cover">
             </div>
 
             <div class="max-w-2xl mx-auto w-full relative z-10 text-center">
@@ -436,7 +441,7 @@
 
         <!-- Section 6 : Wedding Gift -->
         <section class="flex flex-col items-center px-6 relative z-10 bg-cover bg-center snap-start content-z transition-all duration-1000" 
-                 style="background-image: url('{{ asset('img/hero/WhatsApp%20Image%202026-03-.jpeg') }}')"
+                 style="background-image: url('{{ $data['cover_image'] ?? 'https://via.placeholder.com/600x800' }}')"
                  x-data="{ showGifts: false }"
                  :class="showGifts ? 'min-h-screen py-20' : 'h-screen'">
             <div class="absolute inset-0 bg-black/75 backdrop-blur-sm"></div>
@@ -560,7 +565,7 @@
 
         <!-- Section 7 : RSVP & Guestbook -->
         <section class="min-h-screen flex flex-col justify-center py-20 px-6 relative z-10 bg-cover bg-center snap-start content-z"
-                 style="background-image: url('{{ asset('img/hero/WhatsApp%20Image%202026-03-.jpeg') }}')"
+                 style="background-image: url('{{ $data['cover_image'] ?? 'https://via.placeholder.com/600x800' }}')"
                  x-data='{ 
                     sending: false, 
                     success: false, 

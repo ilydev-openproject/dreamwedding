@@ -78,17 +78,38 @@ class DashboardController extends Controller
             ];
         }
 
-        // Hero Images (Uploads + Management)
-        $current_hero = $request->input('hero_images', []);
-        if ($request->hasFile('hero_files')) {
-            foreach ($request->file('hero_files') as $file) {
-                $path = $file->store('invitations/hero', 'public');
-                $current_hero[] = asset('storage/' . $path);
+        // 1. Cover Image (Single)
+        $content['cover_image'] = $request->input('cover_image', $content['cover_image'] ?? null);
+        if ($request->hasFile('cover_file')) {
+            $path = $request->file('cover_file')->store('invitations/cover', 'public');
+            $content['cover_image'] = asset('storage/' . $path);
+        }
+
+        // 2. Groom Photo (Single)
+        $content['groom']['image'] = $request->input('groom_image', $content['groom']['image'] ?? null);
+        if ($request->hasFile('groom_file')) {
+            $path = $request->file('groom_file')->store('invitations/groom', 'public');
+            $content['groom']['image'] = asset('storage/' . $path);
+        }
+
+        // 3. Bride Photo (Single)
+        $content['bride']['image'] = $request->input('bride_image', $content['bride']['image'] ?? null);
+        if ($request->hasFile('bride_file')) {
+            $path = $request->file('bride_file')->store('invitations/bride', 'public');
+            $content['bride']['image'] = asset('storage/' . $path);
+        }
+
+        // 4. Slideshow Images (Multiple Array)
+        $current_slideshow = $request->input('slideshow_images', []);
+        if ($request->hasFile('slideshow_files')) {
+            foreach ($request->file('slideshow_files') as $file) {
+                $path = $file->store('invitations/slideshow', 'public');
+                $current_slideshow[] = asset('storage/' . $path);
             }
         }
-        $content['hero_images'] = array_values(array_unique(array_filter($current_hero)));
+        $content['hero_images'] = array_values(array_unique(array_filter($current_slideshow))); // Backwards compatible with existing hero slider
 
-        // Gallery Images (Uploads + Management)
+        // 5. Gallery Images (Multiple Array)
         $current_gallery = $request->input('gallery_images', []);
         if ($request->hasFile('gallery_files')) {
             foreach ($request->file('gallery_files') as $file) {
@@ -98,7 +119,7 @@ class DashboardController extends Controller
         }
         $content['gallery'] = array_values(array_unique(array_filter($current_gallery)));
 
-        // Guest List (New)
+        // Guest List
         if ($request->has('guests')) {
             $content['guests'] = array_values(array_filter($request->input('guests'), function($guest) {
                 return !empty($guest['name']);

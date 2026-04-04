@@ -59,11 +59,19 @@
             isSidebarOpen: false,
             inviteUrl: "{{ route('invitation.show', $invitation->slug) }}",
             guests: @json($invitation->content['guests'] ?? []),
+            cover_image: "{{ $invitation->content['cover_image'] ?? '' }}",
+            groom_image: @json($invitation->content['groom']['image'] ?? ''),
+            bride_image: @json($invitation->content['bride']['image'] ?? ''),
             hero_images: @json($invitation->content['hero_images'] ?? []),
             gallery_images: @json($invitation->content['gallery'] ?? []),
-            heroPreviews: [], 
+            
+            heroPreviews: [],
             galleryPreviews: [],
+            coverPreview: null,
+            groomPreview: null,
+            bridePreview: null,
             isUploading: false,
+            
             newName: '',
             newPhone: '',
             search: '',
@@ -74,12 +82,26 @@
             },
             handleFile(event, type) {
                 const files = event.target.files;
-                const previews = [];
-                for (let i = 0; i < files.length; i++) {
-                    previews.push(URL.createObjectURL(files[i]));
+                if (!files.length) return;
+                
+                if (type === 'cover') this.coverPreview = URL.createObjectURL(files[0]);
+                if (type === 'groom') this.groomPreview = URL.createObjectURL(files[0]);
+                if (type === 'bride') this.bridePreview = URL.createObjectURL(files[0]);
+                
+                if (type === 'hero' || type === 'gallery') {
+                    const previews = [];
+                    for (let i = 0; i < files.length; i++) {
+                        previews.push(URL.createObjectURL(files[i]));
+                    }
+                    if(type === 'hero') this.heroPreviews = previews;
+                    if(type === 'gallery') this.galleryPreviews = previews;
                 }
-                if(type === 'hero') this.heroPreviews = previews;
-                if(type === 'gallery') this.galleryPreviews = previews;
+            },
+            removeHero(index) {
+                this.hero_images.splice(index, 1);
+            },
+            removeGallery(index) {
+                this.gallery_images.splice(index, 1);
             },
             addGuest() {
                 if (this.newName.trim() === '') return;
@@ -481,8 +503,7 @@ Hormat kami,
                         </div>
 
                         <!-- TAB: MEDIA -->
-                        <div x-show="activeTab === 'media'" class="space-y-8" @submit="isUploading = true">
-                            
+                        <div x-show="activeTab === 'media'" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             <!-- Liquid Loader Overlay -->
                             <div x-show="isUploading" x-transition x-cloak class="fixed inset-0 bg-white/80 backdrop-blur-md z-[200] flex flex-col items-center justify-center">
                                 <div class="liquid-container liquid-filling mb-4">
@@ -491,174 +512,114 @@ Hormat kami,
                                 <p class="text-blue-600 font-bold animate-pulse">Sedang Mengisi Air... (Mengunggah Foto)</p>
                             </div>
 
-                            <!-- Hero Images Section -->
-                            <div class="bg-white p-8 rounded-3xl border border-gray-100 shadow-xl overflow-hidden relative">
-                                <div class="absolute top-0 right-0 w-32 h-32 bg-rose-50 rounded-full -mr-16 -mt-16 opacity-50"></div>
-                                <div class="relative z-10">
-                                    <div class="flex justify-between items-center mb-8">
-                                        <h3 class="font-black text-2xl text-gray-900 flex items-center">
-                                            <span class="w-10 h-10 rounded-2xl bg-rose-600 text-white flex items-center justify-center mr-4 shadow-lg shadow-rose-200">05</span>
-                                            Foto Latar Belakang (Hero)
-                                        </h3>
+                            <!-- 1. COVER IMAGE (Single) -->
+                            <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-xl flex flex-col">
+                                <h3 class="font-bold text-lg mb-4 flex items-center gap-3">
+                                    <span class="w-8 h-8 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center text-xs">01</span>
+                                    Foto Cover Utama
+                                </h3>
+                                <div class="flex-1 space-y-4">
+                                    <div class="relative group aspect-[4/3] rounded-2xl overflow-hidden bg-gray-50 border-2 border-dashed border-gray-200">
+                                        <img :src="coverPreview || cover_image || 'https://via.placeholder.com/400x300?text=No+Cover'" class="w-full h-full object-cover">
+                                        <input type="file" name="cover_file" class="hidden" id="cover_upload" @change="handleFile($event, 'cover')">
+                                        <label for="cover_upload" class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center cursor-pointer text-white">
+                                            <svg class="w-8 h-8 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path></svg>
+                                            <span class="text-xs font-bold uppercase">Ganti Cover</span>
+                                        </label>
                                     </div>
-                                    
-                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        <!-- Upload Box -->
-                                        <div class="border-2 border-dashed border-rose-200 rounded-3xl p-10 text-center hover:bg-rose-50/30 hover:border-rose-400 transition-all group bg-gray-50/50">
-                                            <input type="file" name="hero_files[]" multiple accept="image/*" class="hidden" id="hero_upload" @change="handleFile($event, 'hero')">
-                                            <label for="hero_upload" class="cursor-pointer">
-                                                <div class="w-16 h-16 bg-white text-rose-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-md group-hover:rotate-12 transition-transform">
-                                                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                                                </div>
-                                                <p class="font-bold text-gray-800 text-lg">Pilih Foto Utama</p>
-                                                <p class="text-xs text-gray-400 mt-1">Tap untuk mencari di galeri</p>
-                                            </label>
-                                        </div>
+                                    <input type="text" name="cover_image" x-model="cover_image" class="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-2 text-[10px] font-mono outline-none focus:ring-2 focus:ring-orange-500" placeholder="Atau Link URL Cover...">
+                                </div>
+                            </div>
 
-                                        <!-- Preview Grid -->
-                                        <div class="flex flex-wrap gap-3 items-start content-start min-h-[150px] bg-gray-50 rounded-3xl p-4 border border-gray-100">
-                                            <template x-for="url in heroPreviews">
-                                                <div class="w-24 h-24 rounded-xl overflow-hidden shadow-md ring-4 ring-white relative group animate-bounce-in">
-                                                    <img :src="url" class="w-full h-full object-cover">
-                                                    <div class="absolute inset-0 bg-rose-600/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                                        <span class="text-[10px] text-white font-bold px-2 py-1 bg-black/20 rounded-full">Baru</span>
-                                                    </div>
-                                                </div>
-                                            </template>
-                                            <p x-show="heroPreviews.length === 0" class="text-xs text-gray-300 italic self-center mx-auto">Foto yang akan diupload tampil di sini...</p>
-                                        </div>
+                            <!-- 2. GROOM PHOTO (Single) -->
+                            <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-xl flex flex-col">
+                                <h3 class="font-bold text-lg mb-4 flex items-center gap-3">
+                                    <span class="w-8 h-8 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center text-xs">02</span>
+                                    Foto Pengantin Pria
+                                </h3>
+                                <div class="flex-1 space-y-4">
+                                    <div class="relative group aspect-square rounded-2xl overflow-hidden bg-gray-50 border-2 border-dashed border-gray-200 w-3/4 mx-auto">
+                                        <img :src="groomPreview || groom_image || 'https://via.placeholder.com/300?text=Groom'" class="w-full h-full object-cover">
+                                        <input type="file" name="groom_file" class="hidden" id="groom_upload" @change="handleFile($event, 'groom')">
+                                        <label for="groom_upload" class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center cursor-pointer text-white">
+                                            <svg class="w-8 h-8 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                                            <span class="text-xs font-bold">Ganti Foto</span>
+                                        </label>
                                     </div>
+                                    <input type="text" name="groom_image" x-model="groom_image" class="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-2 text-[10px] font-mono outline-none focus:ring-2 focus:ring-blue-500" placeholder="Link URL Foto Pria...">
+                                </div>
+                            </div>
 
-                                    <!-- URL Fallback -->
-                                    <div class="mt-8 pt-8 border-t border-gray-100">
-                                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">Daftar Link Foto Aktif (URL):</p>
-                                        <textarea name="hero_images" rows="2" class="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 focus:ring-2 focus:ring-rose-500 outline-none text-xs font-mono text-gray-600 transition-all" placeholder="Masukkan URL jika tidak via upload...">{{ isset($invitation->content['hero_images']) ? implode("\n", $invitation->content['hero_images']) : '' }}</textarea>
+                            <!-- 3. BRIDE PHOTO (Single) -->
+                            <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-xl flex flex-col">
+                                <h3 class="font-bold text-lg mb-4 flex items-center gap-3">
+                                    <span class="w-8 h-8 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center text-xs">03</span>
+                                    Foto Pengantin Wanita
+                                </h3>
+                                <div class="flex-1 space-y-4">
+                                    <div class="relative group aspect-square rounded-2xl overflow-hidden bg-gray-50 border-2 border-dashed border-gray-200 w-3/4 mx-auto">
+                                        <img :src="bridePreview || bride_image || 'https://via.placeholder.com/300?text=Bride'" class="w-full h-full object-cover">
+                                        <input type="file" name="bride_file" class="hidden" id="bride_upload" @change="handleFile($event, 'bride')">
+                                        <label for="bride_upload" class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center cursor-pointer text-white">
+                                            <svg class="w-8 h-8 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                                            <span class="text-xs font-bold">Ganti Foto</span>
+                                        </label>
+                                    </div>
+                                    <input type="text" name="bride_image" x-model="bride_image" class="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-2 text-[10px] font-mono outline-none focus:ring-2 focus:ring-rose-500" placeholder="Link URL Foto Wanita...">
+                                </div>
+                            </div>
+
+                            <!-- 4. SLIDESHOW (Multiple) -->
+                            <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-xl lg:col-span-1">
+                                <h3 class="font-bold text-lg mb-4 flex items-center gap-3">
+                                    <span class="w-8 h-8 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center text-xs">04</span>
+                                    Slideshow Utama
+                                </h3>
+                                <div class="space-y-4">
+                                    <div class="border-2 border-dashed border-purple-100 rounded-2xl p-6 text-center hover:bg-purple-50/50 transition-all cursor-pointer relative">
+                                        <input type="file" name="hero_files[]" multiple class="absolute inset-0 opacity-0 cursor-pointer" @change="handleFile($event, 'hero')">
+                                        <svg class="w-6 h-6 mx-auto mb-2 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                                        <span class="text-[10px] font-bold text-purple-600 uppercase">Tambah Slideshow</span>
+                                        <template x-if="heroPreviews.length > 0">
+                                            <p class="text-[8px] text-emerald-500 mt-2 font-bold" x-text="'+ ' + heroPreviews.length + ' foto baru dipilih'"></p>
+                                        </template>
+                                    </div>
+                                    <div class="grid grid-cols-4 gap-2">
+                                        <template x-for="(img, idx) in hero_images" :key="img">
+                                            <div class="relative aspect-square rounded-lg overflow-hidden group border border-gray-100">
+                                                <img :src="img" class="w-full h-full object-cover">
+                                                <button type="button" @click="removeHero(idx)" class="absolute inset-0 bg-red-600/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                                </button>
+                                                <input type="hidden" name="hero_images[]" :value="img">
+                                            </div>
+                                        </template>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Gallery Section -->
-                            <div class="bg-white p-8 rounded-3xl border border-gray-100 shadow-xl overflow-hidden relative">
-                                <div class="absolute top-0 left-0 w-32 h-32 bg-cyan-50 rounded-full -ml-16 -mt-16 opacity-50"></div>
-                                <div class="relative z-10">
-                                    <div class="flex justify-between items-center mb-8">
-                                        <h3 class="font-black text-2xl text-gray-900 flex items-center">
-                                            <span class="w-10 h-10 rounded-2xl bg-cyan-600 text-white flex items-center justify-center mr-4 shadow-lg shadow-cyan-200">06</span>
-                                            Galeri Foto Undangan
-                                        </h3>
+                            <!-- 5. GALLERY (Multiple) -->
+                            <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-xl lg:col-span-2">
+                                <h3 class="font-bold text-lg mb-4 flex items-center gap-3">
+                                    <span class="w-8 h-8 rounded-xl bg-cyan-100 text-cyan-600 flex items-center justify-center text-xs">05</span>
+                                    Galeri Foto
+                                </h3>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                    <div class="border-2 border-dashed border-cyan-100 rounded-2xl p-6 text-center hover:bg-cyan-50/50 transition-all cursor-pointer relative h-24 flex flex-col justify-center">
+                                        <input type="file" name="gallery_files[]" multiple class="absolute inset-0 opacity-0 cursor-pointer" @change="handleFile($event, 'gallery')">
+                                        <svg class="w-6 h-6 mx-auto mb-2 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                                        <span class="text-[10px] font-bold text-cyan-600 uppercase">Tambah Foto Galeri</span>
                                     </div>
-
-                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        <!-- Upload Box -->
-                                        <div class="border-2 border-dashed border-cyan-200 rounded-3xl p-10 text-center hover:bg-cyan-50/30 hover:border-cyan-400 transition-all group bg-gray-50/50">
-                                            <input type="file" name="gallery_files[]" multiple accept="image/*" class="hidden" id="gallery_upload" @change="handleFile($event, 'gallery')">
-                                            <label for="gallery_upload" class="cursor-pointer">
-                                                <div class="w-16 h-16 bg-white text-cyan-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-md group-hover:rotate-12 transition-transform">
-                                                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4"></path></svg>
-                                                </div>
-                                                <p class="font-bold text-gray-800 text-lg">Pilih Galeri Foto</p>
-                                                <p class="text-xs text-gray-400 mt-1">Upload foto-foto momen indah berdua</p>
-                                            </label>
-                                        </div>
-
-                                        <!-- Preview Grid -->
-                                        <div class="flex flex-wrap gap-3 items-start content-start min-h-[150px] bg-gray-50 rounded-3xl p-4 border border-gray-100">
-                                            <template x-for="url in galleryPreviews">
-                                                <div class="w-20 h-20 rounded-xl overflow-hidden shadow-md ring-4 ring-white relative animate-bounce-in">
-                                                    <img :src="url" class="w-full h-full object-cover">
-                                                </div>
-                                            </template>
-                                            <p x-show="galleryPreviews.length === 0" class="text-xs text-gray-300 italic self-center mx-auto">Foto galeri baru muncul di sini...</p>
-                                        </div>
-                                    </div>
-
-                                    <!-- Existing Management -->
-                                    <div class="mt-8 pt-8 border-t border-gray-100">
-                                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4 flex items-center">
-                                            <svg class="w-3 h-3 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
-                                            Kelola Foto Utama Saat Ini:
-                                        </p>
-                                        
-                                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                                             <template x-for="(img, idx) in hero_images" :key="img">
-                                                 <div class="relative aspect-square rounded-2xl overflow-hidden group shadow-md border-2 border-white hover:border-rose-400 transition-all cursor-pointer">
-                                                     <img :src="img" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                                                     <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px]">
-                                                         <button type="button" @click="removeHero(idx)" class="w-10 h-10 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center transform scale-75 group-hover:scale-100 transition-all shadow-xl">
-                                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                                                         </button>
-                                                     </div>
-                                                     <!-- Hidden Input Array for Hero -->
-                                                     <input type="hidden" name="hero_images[]" :value="img">
-                                                 </div>
-                                             </template>
-                                             <div x-show="hero_images.length === 0" class="col-span-full py-8 text-center bg-gray-50 rounded-2xl border-2 border-dashed border-gray-100 text-gray-300 text-xs italic">
-                                                Belum ada foto utama yang terpasang Bos...
+                                    <div class="grid grid-cols-5 sm:grid-cols-6 lg:grid-cols-8 gap-2 overflow-y-auto max-h-40">
+                                        <template x-for="(img, idx) in gallery_images" :key="img">
+                                            <div class="relative aspect-square rounded-lg overflow-hidden group border border-gray-100">
+                                                <img :src="img" class="w-full h-full object-cover">
+                                                <button type="button" @click="removeGallery(idx)" class="absolute inset-0 bg-red-600/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                                    <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                                </button>
+                                                <input type="hidden" name="gallery_images[]" :value="img">
                                             </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Gallery Section -->
-                            <div class="bg-white p-8 rounded-3xl border border-gray-100 shadow-xl overflow-hidden relative">
-                                <div class="absolute top-0 left-0 w-32 h-32 bg-cyan-50 rounded-full -ml-16 -mt-16 opacity-50"></div>
-                                <div class="relative z-10">
-                                    <div class="flex justify-between items-center mb-8">
-                                        <h3 class="font-black text-2xl text-gray-900 flex items-center">
-                                            <span class="w-10 h-10 rounded-2xl bg-cyan-600 text-white flex items-center justify-center mr-4 shadow-lg shadow-cyan-200">06</span>
-                                            Galeri Foto Undangan
-                                        </h3>
-                                    </div>
-
-                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                                        <!-- Upload Box -->
-                                        <div class="border-2 border-dashed border-cyan-200 rounded-3xl p-10 text-center hover:bg-cyan-50/30 hover:border-cyan-400 transition-all group bg-gray-50/50">
-                                            <input type="file" name="gallery_files[]" multiple accept="image/*" class="hidden" id="gallery_upload" @change="handleFile($event, 'gallery')">
-                                            <label for="gallery_upload" class="cursor-pointer">
-                                                <div class="w-16 h-16 bg-white text-cyan-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-md group-hover:rotate-12 transition-transform">
-                                                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4"></path></svg>
-                                                </div>
-                                                <p class="font-bold text-gray-800 text-lg">Upload Galeri Baru</p>
-                                                <p class="text-xs text-gray-400 mt-1">Foto lama tidak akan terhapus jika Anda tambah baru</p>
-                                            </label>
-                                        </div>
-
-                                        <!-- Preview Grid (New Uploads) -->
-                                        <div class="flex flex-wrap gap-3 items-start content-start min-h-[150px] bg-gray-50 rounded-3xl p-4 border border-gray-100">
-                                            <template x-for="url in galleryPreviews">
-                                                <div class="w-20 h-20 rounded-xl overflow-hidden shadow-md ring-4 ring-white relative animate-bounce-in">
-                                                    <img :src="url" class="w-full h-full object-cover">
-                                                </div>
-                                            </template>
-                                            <p x-show="galleryPreviews.length === 0" class="text-xs text-gray-300 italic self-center mx-auto">Foto yang baru Anda pilih akan tampil di sini...</p>
-                                        </div>
-                                    </div>
-
-                                    <!-- Existing Gallery Management -->
-                                    <div class="mt-8 pt-8 border-t border-gray-100">
-                                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4 flex items-center">
-                                            <svg class="w-3 h-3 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                                            Isi Galeri Anda Saat Ini:
-                                        </p>
-                                        
-                                        <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3">
-                                            <template x-for="(img, idx) in gallery_images" :key="img">
-                                                <div class="relative aspect-square rounded-xl overflow-hidden group shadow-sm border-2 border-white hover:border-cyan-400 transition-all cursor-pointer">
-                                                    <img :src="img" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                                                    <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                                        <button type="button" @click="removeGallery(idx)" class="w-8 h-8 bg-white text-red-500 rounded-full flex items-center justify-center hover:bg-red-500 hover:text-white transition-colors shadow-lg">
-                                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                                                        </button>
-                                                    </div>
-                                                    <!-- Hidden Input Array for Gallery -->
-                                                    <input type="hidden" name="gallery_images[]" :value="img">
-                                                </div>
-                                            </template>
-                                            <div x-show="gallery_images.length === 0" class="col-span-full py-6 text-center bg-gray-50 rounded-xl border-2 border-dashed border-gray-100 text-gray-300 text-[10px] italic">
-                                                Galeri masih kosong Bos...
-                                            </div>
-                                        </div>
+                                        </template>
                                     </div>
                                 </div>
                             </div>
