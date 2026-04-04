@@ -584,14 +584,15 @@ Hormat kami,
                                             <p class="text-[8px] text-emerald-500 mt-2 font-bold" x-text="'+ ' + heroPreviews.length + ' foto baru dipilih'"></p>
                                         </template>
                                     </div>
-                                    <div class="grid grid-cols-4 gap-2">
+                                    <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
                                         <template x-for="(img, idx) in hero_images" :key="img">
-                                            <div class="relative aspect-square rounded-lg overflow-hidden group border border-gray-100">
-                                                <img :src="img" class="w-full h-full object-cover">
-                                                <button type="button" @click="removeHero(idx)" class="absolute inset-0 bg-red-600/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                            <div class="relative aspect-square rounded-xl overflow-hidden group border-2 border-gray-100 shadow-sm">
+                                                <img :src="img" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                                                <button type="button" @click="removeHero(idx)" class="absolute inset-0 bg-red-600/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[1px]">
+                                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                                 </button>
-                                                <input type="hidden" name="hero_images[]" :value="img">
+                                                <!-- Crucial Fix: Name must be slideshow_images[] -->
+                                                <input type="hidden" name="slideshow_images[]" :value="img">
                                             </div>
                                         </template>
                                     </div>
@@ -610,12 +611,12 @@ Hormat kami,
                                         <svg class="w-6 h-6 mx-auto mb-2 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                                         <span class="text-[10px] font-bold text-cyan-600 uppercase">Tambah Foto Galeri</span>
                                     </div>
-                                    <div class="grid grid-cols-5 sm:grid-cols-6 lg:grid-cols-8 gap-2 overflow-y-auto max-h-40">
+                                    <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3 overflow-y-auto max-h-96 p-2 bg-gray-50/50 rounded-2xl border border-gray-100">
                                         <template x-for="(img, idx) in gallery_images" :key="img">
-                                            <div class="relative aspect-square rounded-lg overflow-hidden group border border-gray-100">
-                                                <img :src="img" class="w-full h-full object-cover">
-                                                <button type="button" @click="removeGallery(idx)" class="absolute inset-0 bg-red-600/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                                    <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                            <div class="relative aspect-square rounded-xl overflow-hidden group border-2 border-white shadow-md hover:border-cyan-400 transition-all">
+                                                <img :src="img" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                                                <button type="button" @click="removeGallery(idx)" class="absolute inset-0 bg-red-600/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[1px]">
+                                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                                 </button>
                                                 <input type="hidden" name="gallery_images[]" :value="img">
                                             </div>
