@@ -1,6 +1,22 @@
-<?php
-
-use Illuminate\Support\Facades\Route;
+// Emergency Storage Link (For Hostinger/Vercel)
+Route::get('/fix-storage', function () {
+    $target = storage_path('app/public');
+    $link = public_path('storage');
+    
+    if (file_exists($link)) {
+        if (is_link($link)) {
+            unlink($link);
+        } else {
+            return "Folder public/storage sudah ada sebagai FOLDER asli, bukan link. Silakan hapus manual dulu di File Manager.";
+        }
+    }
+    
+    if (symlink($target, $link)) {
+        return "Berhasil Bos! Storage Link sudah terpasang. Sekarang foto pasti muncul.";
+    } else {
+        return "Gagal membuat link. Coba hapus folder 'public/storage' di File Manager Hostinger lalu buka lagi link ini.";
+    }
+});
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InvitationController;
