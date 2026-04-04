@@ -81,8 +81,20 @@
                 if(type === 'hero') this.heroPreviews = previews;
                 if(type === 'gallery') this.galleryPreviews = previews;
             },
+            addGuest() {
+                if (this.newName.trim() === '') return;
+                this.guests.push({ name: this.newName, phone: this.newPhone });
+                this.newName = '';
+                this.newPhone = '';
+            },
             removeGuest(index) {
                 this.guests.splice(index, 1);
+            },
+            removeHero(index) {
+                this.hero_images.splice(index, 1);
+            },
+            removeGallery(index) {
+                this.gallery_images.splice(index, 1);
             },
             sendWA(guest) {
                 const guestUrl = `${this.inviteUrl}?to=${encodeURIComponent(guest.name)}`;
@@ -306,7 +318,7 @@ Hormat kami,
                         </div>
                     @endif
 
-                    <form id="main-form" :action="'{{ route('dashboard.update', $invitation->access_token) }}#' + activeTab" method="POST" enctype="multipart/form-data" class="space-y-8">
+                    <form id="main-form" :action="'{{ route('dashboard.update', $invitation->access_token) }}#' + activeTab" method="POST" enctype="multipart/form-data" class="space-y-8" @submit="isUploading = true">
                         @csrf
                         
                         <!-- TAB: PROFIL -->
@@ -568,23 +580,22 @@ Hormat kami,
                                         </p>
                                         
                                         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                                            <template x-for="(img, idx) in hero_images" :key="idx">
-                                                <div class="relative aspect-square rounded-2xl overflow-hidden group shadow-md border-2 border-white hover:border-rose-400 transition-all cursor-pointer">
-                                                    <img :src="img" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                                                    <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px]">
-                                                        <button type="button" @click="hero_images.splice(idx, 1)" class="w-10 h-10 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center transform scale-75 group-hover:scale-100 transition-all shadow-xl">
-                                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </template>
-                                            <div x-show="hero_images.length === 0" class="col-span-full py-8 text-center bg-gray-50 rounded-2xl border-2 border-dashed border-gray-100 text-gray-300 text-xs italic">
+                                             <template x-for="(img, idx) in hero_images" :key="img">
+                                                 <div class="relative aspect-square rounded-2xl overflow-hidden group shadow-md border-2 border-white hover:border-rose-400 transition-all cursor-pointer">
+                                                     <img :src="img" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                                                     <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px]">
+                                                         <button type="button" @click="removeHero(idx)" class="w-10 h-10 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center transform scale-75 group-hover:scale-100 transition-all shadow-xl">
+                                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                                         </button>
+                                                     </div>
+                                                     <!-- Hidden Input Array for Hero -->
+                                                     <input type="hidden" name="hero_images[]" :value="img">
+                                                 </div>
+                                             </template>
+                                             <div x-show="hero_images.length === 0" class="col-span-full py-8 text-center bg-gray-50 rounded-2xl border-2 border-dashed border-gray-100 text-gray-300 text-xs italic">
                                                 Belum ada foto utama yang terpasang Bos...
                                             </div>
                                         </div>
-
-                                        <!-- Hidden Input to sync with server -->
-                                        <textarea :value="hero_images.join('\n')" name="hero_images" class="hidden"></textarea>
                                     </div>
                                 </div>
                             </div>
@@ -632,23 +643,22 @@ Hormat kami,
                                         </p>
                                         
                                         <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3">
-                                            <template x-for="(img, idx) in gallery_images" :key="idx">
+                                            <template x-for="(img, idx) in gallery_images" :key="img">
                                                 <div class="relative aspect-square rounded-xl overflow-hidden group shadow-sm border-2 border-white hover:border-cyan-400 transition-all cursor-pointer">
                                                     <img :src="img" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                                                     <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                                        <button type="button" @click="gallery_images.splice(idx, 1)" class="w-8 h-8 bg-white text-red-500 rounded-full flex items-center justify-center hover:bg-red-500 hover:text-white transition-colors shadow-lg">
+                                                        <button type="button" @click="removeGallery(idx)" class="w-8 h-8 bg-white text-red-500 rounded-full flex items-center justify-center hover:bg-red-500 hover:text-white transition-colors shadow-lg">
                                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                                         </button>
                                                     </div>
+                                                    <!-- Hidden Input Array for Gallery -->
+                                                    <input type="hidden" name="gallery_images[]" :value="img">
                                                 </div>
                                             </template>
                                             <div x-show="gallery_images.length === 0" class="col-span-full py-6 text-center bg-gray-50 rounded-xl border-2 border-dashed border-gray-100 text-gray-300 text-[10px] italic">
                                                 Galeri masih kosong Bos...
                                             </div>
                                         </div>
-
-                                        <!-- Hidden Input to sync with server -->
-                                        <textarea :value="gallery_images.join('\n')" name="gallery_images" class="hidden"></textarea>
                                     </div>
                                 </div>
                             </div>

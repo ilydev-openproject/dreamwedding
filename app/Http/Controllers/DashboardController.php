@@ -78,33 +78,25 @@ class DashboardController extends Controller
             ];
         }
 
-        // Hero Images (Uploads + Manual)
+        // Hero Images (Uploads + Management)
+        $current_hero = $request->input('hero_images', []);
         if ($request->hasFile('hero_files')) {
-            if (!isset($content['hero_images'])) $content['hero_images'] = [];
             foreach ($request->file('hero_files') as $file) {
                 $path = $file->store('invitations/hero', 'public');
-                $content['hero_images'][] = asset('storage/' . $path);
+                $current_hero[] = asset('storage/' . $path);
             }
         }
-        if ($request->filled('hero_images')) {
-            $images = preg_split('/\r\n|\r|\n/', $request->input('hero_images'));
-            $merged_hero = array_merge($content['hero_images'] ?? [], array_values(array_filter($images)));
-            $content['hero_images'] = array_values(array_unique($merged_hero));
-        }
+        $content['hero_images'] = array_values(array_unique(array_filter($current_hero)));
 
-        // Gallery Images (Uploads + Manual)
+        // Gallery Images (Uploads + Management)
+        $current_gallery = $request->input('gallery_images', []);
         if ($request->hasFile('gallery_files')) {
-            if (!isset($content['gallery'])) $content['gallery'] = [];
             foreach ($request->file('gallery_files') as $file) {
                 $path = $file->store('invitations/gallery', 'public');
-                $content['gallery'][] = asset('storage/' . $path);
+                $current_gallery[] = asset('storage/' . $path);
             }
         }
-        if ($request->filled('gallery_images')) {
-            $gallery = preg_split('/\r\n|\r|\n/', $request->input('gallery_images'));
-            $merged_gallery = array_merge($content['gallery'] ?? [], array_values(array_filter($gallery)));
-            $content['gallery'] = array_values(array_unique($merged_gallery));
-        }
+        $content['gallery'] = array_values(array_unique(array_filter($current_gallery)));
 
         // Guest List (New)
         if ($request->has('guests')) {
