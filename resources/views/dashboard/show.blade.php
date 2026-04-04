@@ -126,7 +126,8 @@
                 const bride = @json($invitation->content['bride']['name'] ?? 'Bride');
                 const groom = @json($invitation->content['groom']['name'] ?? 'Groom');
                 
-                const message = `*\u{1F48C} UNDANGAN PERNIKAHAN \u{1F48C}*
+                const msgEmoji = String.fromCodePoint(0x1F48C);
+                const message = `*${msgEmoji} UNDANGAN PERNIKAHAN ${msgEmoji}*
 
 *Kepada Yth.*
 *Bapak/Ibu/Saudara/i*
