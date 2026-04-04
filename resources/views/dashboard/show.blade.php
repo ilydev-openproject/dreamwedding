@@ -61,6 +61,9 @@
             guests: @json($invitation->content['guests'] ?? []),
             hero_images: @json($invitation->content['hero_images'] ?? []),
             gallery_images: @json($invitation->content['gallery'] ?? []),
+            heroPreviews: [], 
+            galleryPreviews: [],
+            isUploading: false,
             newName: '',
             newPhone: '',
             search: '',
@@ -69,11 +72,14 @@
                     this.activeTab = window.location.hash.slice(1);
                 }
             },
-            addGuest() {
-                if (this.newName.trim() === '') return;
-                this.guests.push({ name: this.newName, phone: this.newPhone });
-                this.newName = '';
-                this.newPhone = '';
+            handleFile(event, type) {
+                const files = event.target.files;
+                const previews = [];
+                for (let i = 0; i < files.length; i++) {
+                    previews.push(URL.createObjectURL(files[i]));
+                }
+                if(type === 'hero') this.heroPreviews = previews;
+                if(type === 'gallery') this.galleryPreviews = previews;
             },
             removeGuest(index) {
                 this.guests.splice(index, 1);
@@ -463,24 +469,10 @@ Hormat kami,
                         </div>
 
                         <!-- TAB: MEDIA -->
-                        <div x-show="activeTab === 'media'" class="space-y-8" 
-                             x-data="{ 
-                                heroPreviews: [], 
-                                galleryPreviews: [],
-                                isUploading: false,
-                                handleFile(event, type) {
-                                    const files = event.target.files;
-                                    const previews = [];
-                                    for (let i = 0; i < files.length; i++) {
-                                        previews.push(URL.createObjectURL(files[i]));
-                                    }
-                                    if(type === 'hero') this.heroPreviews = previews;
-                                    if(type === 'gallery') this.galleryPreviews = previews;
-                                }
-                             }" @submit="isUploading = true">
+                        <div x-show="activeTab === 'media'" class="space-y-8" @submit="isUploading = true">
                             
                             <!-- Liquid Loader Overlay -->
-                            <div x-show="isUploading" x-transition x-cloak class="fixed inset-0 bg-white/80 backdrop-blur-md z-[100] flex flex-col items-center justify-center">
+                            <div x-show="isUploading" x-transition x-cloak class="fixed inset-0 bg-white/80 backdrop-blur-md z-[200] flex flex-col items-center justify-center">
                                 <div class="liquid-container liquid-filling mb-4">
                                     <div class="liquid-wave"></div>
                                 </div>
@@ -592,7 +584,7 @@ Hormat kami,
                                         </div>
 
                                         <!-- Hidden Input to sync with server -->
-                                        <textarea x-model="hero_images.join('\n')" name="hero_images" x-show="false" class="hidden"></textarea>
+                                        <textarea :value="hero_images.join('\n')" name="hero_images" class="hidden"></textarea>
                                     </div>
                                 </div>
                             </div>
@@ -656,7 +648,7 @@ Hormat kami,
                                         </div>
 
                                         <!-- Hidden Input to sync with server -->
-                                        <textarea x-model="gallery_images.join('\n')" name="gallery_images" x-show="false" class="hidden"></textarea>
+                                        <textarea :value="gallery_images.join('\n')" name="gallery_images" class="hidden"></textarea>
                                     </div>
                                 </div>
                             </div>
