@@ -576,24 +576,32 @@ Hormat kami,
                                     Slideshow Utama
                                 </h3>
                                 <div class="space-y-4">
-                                    <div class="border-2 border-dashed border-purple-100 rounded-2xl p-6 text-center hover:bg-purple-50/50 transition-all cursor-pointer relative">
-                                        <input type="file" name="hero_files[]" multiple class="absolute inset-0 opacity-0 cursor-pointer" @change="handleFile($event, 'hero')">
-                                        <svg class="w-6 h-6 mx-auto mb-2 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                                        <span class="text-[10px] font-bold text-purple-600 uppercase">Tambah Slideshow</span>
+                                    <div class="border-2 border-dashed border-purple-100 rounded-2xl p-6 text-center hover:bg-purple-50/50 transition-all cursor-pointer relative group">
+                                        <input type="file" name="slideshow_files[]" id="slideshow_input" multiple class="absolute inset-0 opacity-0 cursor-pointer" @change="handleFile($event, 'hero')">
+                                        <div class="w-10 h-10 bg-purple-50 text-purple-500 rounded-full flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform">
+                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                                        </div>
+                                        <span class="text-[10px] font-bold text-purple-600 uppercase tracking-tighter">Tambah Slideshow</span>
                                         <template x-if="heroPreviews.length > 0">
                                             <p class="text-[8px] text-emerald-500 mt-2 font-bold" x-text="'+ ' + heroPreviews.length + ' foto baru dipilih'"></p>
                                         </template>
                                     </div>
-                                    <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
-                                        <template x-for="(img, idx) in hero_images" :key="img">
-                                            <div class="relative aspect-square rounded-xl overflow-hidden group border-2 border-gray-100 shadow-sm">
-                                                <img :src="img" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                                                <button type="button" @click="removeHero(idx)" class="absolute inset-0 bg-red-600/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[1px]">
-                                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                                                </button>
-                                                <!-- Crucial Fix: Name must be slideshow_images[] -->
+                                    <div class="grid grid-cols-2 md:grid-cols-3 gap-2 p-2 bg-gray-50/50 rounded-2xl">
+                                        <template x-for="(img, idx) in hero_images" :key="idx">
+                                            <div class="relative aspect-square rounded-xl overflow-hidden group border-2 border-white shadow-sm transition-all hover:border-purple-300">
+                                                <img :src="img" class="w-full h-full object-cover">
+                                                <div class="absolute inset-0 bg-red-600/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                                    <button type="button" @click="hero_images.splice(idx, 1)" class="w-8 h-8 bg-white text-red-500 rounded-full flex items-center justify-center shadow-lg transform scale-75 group-hover:scale-100 transition-transform">
+                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                                    </button>
+                                                </div>
+                                                <!-- Send as both to be safe -->
                                                 <input type="hidden" name="slideshow_images[]" :value="img">
+                                                <input type="hidden" name="hero_images[]" :value="img">
                                             </div>
+                                        </template>
+                                        <template x-if="hero_images.length === 0">
+                                            <div class="col-span-full py-8 text-center text-[10px] text-gray-300 italic">Belum ada slideshow Bos...</div>
                                         </template>
                                     </div>
                                 </div>
