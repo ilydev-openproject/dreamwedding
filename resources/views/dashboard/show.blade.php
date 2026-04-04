@@ -126,8 +126,9 @@
                 const bride = @json($invitation->content['bride']['name'] ?? 'Bride');
                 const groom = @json($invitation->content['groom']['name'] ?? 'Groom');
                 
-                const msgEmoji = String.fromCodePoint(0x1F4E9);
-                const message = `*${msgEmoji} UNDANGAN PERNIKAHAN ${msgEmoji}*
+                // Jurus paling sakti: Pakai Surrogate Pair (UTF-16)
+                const emoji = '\uD83D\uDCE9';
+                const message = `*${emoji} UNDANGAN PERNIKAHAN ${emoji}*
 
 *Kepada Yth.*
 *Bapak/Ibu/Saudara/i*
