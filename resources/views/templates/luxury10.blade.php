@@ -255,7 +255,7 @@
 
         <!-- Section 2.7 : Our Love Story -->
         <section class="relative min-h-screen flex flex-col items-center justify-center px-6 py-20 snap-start overflow-hidden bg-cover bg-center" 
-                 style="background-image: url('{{ asset('img/hero/WhatsApp%20Image%202026-03-26%20at%2021.13.33.jpeg') }}')">
+                 style="background-image: url('{{ $data['story_bg'] ?? ($data['cover_image'] ?? 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80') }}')">
             <div class="absolute inset-0 bg-black/75"></div>
             
             <div class="relative z-10 max-w-2xl w-full translate-z">
@@ -314,7 +314,7 @@
 
         <!-- Section 3 : Detil Acara -->
         <section class="relative min-h-screen flex flex-col items-center justify-start py-20 px-6 snap-start overflow-hidden bg-cover bg-center" 
-                 style="background-image: url('{{ $data['cover_image'] ?? 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&q=80' }}')">
+                 style="background-image: url('{{ $data['event_bg'] ?? ($data['cover_image'] ?? 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&q=80') }}')">
             <div class="absolute inset-0 bg-black/80"></div>
             
             <div class="relative z-10 w-full max-w-2xl translate-z" data-aos="fade-up">
@@ -575,7 +575,7 @@
 
         <!-- Section 7 : RSVP & Guestbook -->
         <section class="min-h-screen flex flex-col justify-center py-20 px-6 relative z-10 bg-cover bg-center snap-start content-z"
-                 style="background-image: url('{{ $data['cover_image'] ?? 'https://via.placeholder.com/600x800' }}')"
+                 style="background-image: url('{{ $data['rsvp_bg'] ?? ($data['cover_image'] ?? 'https://images.unsplash.com/photo-1469334031218-e382a71b716b?auto=format&fit=crop&q=80') }}')"
                  x-data='{ 
                     sending: false, 
                     success: false, 

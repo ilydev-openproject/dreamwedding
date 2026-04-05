@@ -108,6 +108,20 @@ class DashboardController extends Controller
             $content['og_image'] = asset('storage/' . $path);
         }
 
+        // Section Backgrounds
+        if ($request->hasFile('story_bg_file')) {
+            $path = $request->file('story_bg_file')->store('invitations/bg', 'public');
+            $content['story_bg'] = asset('storage/' . $path);
+        }
+        if ($request->hasFile('event_bg_file')) {
+            $path = $request->file('event_bg_file')->store('invitations/bg', 'public');
+            $content['event_bg'] = asset('storage/' . $path);
+        }
+        if ($request->hasFile('rsvp_bg_file')) {
+            $path = $request->file('rsvp_bg_file')->store('invitations/bg', 'public');
+            $content['rsvp_bg'] = asset('storage/' . $path);
+        }
+
         // 4. Slideshow Images (Multiple Array)
         $current_slideshow = $request->input('slideshow_images', []);
         if ($request->hasFile('slideshow_files')) {

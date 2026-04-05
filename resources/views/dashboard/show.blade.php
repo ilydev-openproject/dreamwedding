@@ -68,10 +68,10 @@
             
             heroPreviews: [],
             galleryPreviews: [],
-            coverPreview: null,
-            groomPreview: null,
-            bridePreview: null,
             ogPreview: null,
+            storyBgPreview: null,
+            eventBgPreview: null,
+            rsvpBgPreview: null,
             isUploading: false,
             
             newName: '',
@@ -105,6 +105,9 @@
                 if (type === 'groom') this.groomPreview = URL.createObjectURL(files[0]);
                 if (type === 'bride') this.bridePreview = URL.createObjectURL(files[0]);
                 if (type === 'og') this.ogPreview = URL.createObjectURL(files[0]);
+                if (type === 'storyBg') this.storyBgPreview = URL.createObjectURL(files[0]);
+                if (type === 'eventBg') this.eventBgPreview = URL.createObjectURL(files[0]);
+                if (type === 'rsvpBg') this.rsvpBgPreview = URL.createObjectURL(files[0]);
                 
                 if (type === 'hero' || type === 'gallery') {
                     const previews = [];
@@ -978,6 +981,50 @@ Terima Kasih.
                                     <p class="text-gray-400 text-sm italic">Belum ada ucapan yang masuk.</p>
                                 </div>
                             @endforelse
+                        </div>
+                        <!-- Background Love Story -->
+                        <div class="bg-gray-50 p-6 rounded-2xl border-2 border-dashed border-gray-100">
+                            <h3 class="font-bold text-gray-900 mb-4 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                                BG Love Story
+                            </h3>
+                            <div class="relative group aspect-video bg-white rounded-xl overflow-hidden shadow-sm border border-gray-200">
+                                <img :src="storyBgPreview || '{{ $invitation->content['story_bg'] ?? 'https://sesarengan.my.id/images/default-bg.jpg' }}'" class="w-full h-full object-cover">
+                                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                    <label class="cursor-pointer bg-white text-gray-900 px-4 py-2 rounded-lg font-bold text-sm">Ganti Gambar</label>
+                                </div>
+                                <input type="file" name="story_bg_file" @change="handleFile($event, 'storyBg')" class="absolute inset-0 opacity-0 cursor-pointer">
+                            </div>
+                        </div>
+
+                        <!-- Background Event -->
+                        <div class="bg-gray-50 p-6 rounded-2xl border-2 border-dashed border-gray-100">
+                            <h3 class="font-bold text-gray-900 mb-4 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                BG Detail Acara
+                            </h3>
+                            <div class="relative group aspect-video bg-white rounded-xl overflow-hidden shadow-sm border border-gray-200">
+                                <img :src="eventBgPreview || '{{ $invitation->content['event_bg'] ?? 'https://sesarengan.my.id/images/default-bg.jpg' }}'" class="w-full h-full object-cover">
+                                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                    <label class="cursor-pointer bg-white text-gray-900 px-4 py-2 rounded-lg font-bold text-sm">Ganti Gambar</label>
+                                </div>
+                                <input type="file" name="event_bg_file" @change="handleFile($event, 'eventBg')" class="absolute inset-0 opacity-0 cursor-pointer">
+                            </div>
+                        </div>
+
+                        <!-- Background RSVP -->
+                        <div class="bg-gray-50 p-6 rounded-2xl border-2 border-dashed border-gray-100">
+                            <h3 class="font-bold text-gray-900 mb-4 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
+                                BG RSVP/Ucapan
+                            </h3>
+                            <div class="relative group aspect-video bg-white rounded-xl overflow-hidden shadow-sm border border-gray-200">
+                                <img :src="rsvpBgPreview || '{{ $invitation->content['rsvp_bg'] ?? 'https://sesarengan.my.id/images/default-bg.jpg' }}'" class="w-full h-full object-cover">
+                                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                    <label class="cursor-pointer bg-white text-gray-900 px-4 py-2 rounded-lg font-bold text-sm">Ganti Gambar</label>
+                                </div>
+                                <input type="file" name="rsvp_bg_file" @change="handleFile($event, 'rsvpBg')" class="absolute inset-0 opacity-0 cursor-pointer">
+                            </div>
                         </div>
                     </div>
                 </div>
