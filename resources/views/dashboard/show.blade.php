@@ -400,8 +400,9 @@ Terima Kasih.
                                 </h3>
                                 <div class="space-y-4">
                                     <div>
-                                        <label class="block text-sm font-semibold text-gray-700 mb-1">Tanggal (Masehi)</label>
-                                        <input type="date" name="event_date" value="{{ $invitation->content['event']['date'] ?? '' }}" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none">
+                                        <label class="block text-sm font-semibold text-gray-700 mb-1">Tanggal Utama (Patokan Countdown)</label>
+                                        <input type="date" name="event_date" value="{{ $invitation->content['event']['date'] ?? '' }}" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none hover:bg-white transition-all shadow-sm">
+                                        <p class="text-[10px] text-gray-400 mt-1 italic">*Gunakan tanggal termuda (paling awal) atau hari H acara besar Bos.</p>
                                     </div>
                                     <div>
                                         <label class="block text-sm font-semibold text-gray-700 mb-1">Tanggal (Hijriah/Opsional)</label>
@@ -411,9 +412,15 @@ Terima Kasih.
 
                                 <h4 class="font-bold text-md mt-8 mb-4 text-gray-700 border-b pb-2">Detail Akad Nikah</h4>
                                 <div class="space-y-4">
-                                    <div>
-                                        <label class="block text-sm font-semibold text-gray-700 mb-1">Waktu Akad</label>
-                                        <input type="time" name="event_time_akad" value="{{ $invitation->content['event']['time_akad'] ?? '' }}" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-sm font-semibold text-gray-700 mb-1">Tanggal Akad</label>
+                                            <input type="date" name="event_date_akad" value="{{ $invitation->content['event']['date_akad'] ?? '' }}" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-semibold text-gray-700 mb-1">Waktu Akad</label>
+                                            <input type="time" name="event_time_akad" value="{{ $invitation->content['event']['time_akad'] ?? '' }}" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none">
+                                        </div>
                                     </div>
                                     <div>
                                         <label class="block text-sm font-semibold text-gray-700 mb-1">Nama Tempat/Gedung</label>
@@ -437,9 +444,15 @@ Terima Kasih.
 
                                 <h4 class="font-bold text-md mt-8 mb-4 text-gray-700 border-b pb-2">Detail Resepsi</h4>
                                 <div class="space-y-4">
-                                    <div>
-                                        <label class="block text-sm font-semibold text-gray-700 mb-1">Waktu Resepsi</label>
-                                        <input type="time" name="event_time_resepsi" value="{{ $invitation->content['event']['time_resepsi'] ?? '' }}" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-sm font-semibold text-gray-700 mb-1">Tanggal Resepsi</label>
+                                            <input type="date" name="event_date_resepsi" value="{{ $invitation->content['event']['date_resepsi'] ?? '' }}" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-semibold text-gray-700 mb-1">Waktu Resepsi</label>
+                                            <input type="time" name="event_time_resepsi" value="{{ $invitation->content['event']['time_resepsi'] ?? '' }}" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none">
+                                        </div>
                                     </div>
                                     <div>
                                         <label class="block text-sm font-semibold text-gray-700 mb-1">Nama Tempat/Gedung</label>

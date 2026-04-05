@@ -207,7 +207,7 @@
                         {{ !empty($data['event']['date']) ? \Carbon\Carbon::parse($data['event']['date'])->translatedFormat('l, d F Y') : 'MINGGU, 16 AGUSTUS 2026' }}
                     </p>
                     <p class="text-white font-poppins text-[13px] tracking-[2px] opacity-80 uppercase">
-                        RESEPSI: {{ $data['event']['time_resepsi'] ?? '10:00' }} WIB - SELESAI
+                        The Big Day is Coming!
                     </p>
                 </div>
                 <p class="text-[13px] md:text-base leading-relaxed text-gray-300 font-poppins" data-aos="fade-up" data-aos-delay="1600" data-aos-duration="2500">
@@ -365,14 +365,14 @@
 
                 <!-- Event Details Section -->
                 <div class="space-y-16">
-                    <!-- Resepsi (Left Aligned - Now Primary) -->
+                    <!-- Resepsi -->
                     <div class="text-left" data-aos="fade-right" data-aos-delay="1200" data-aos-duration="2500">
                         <div class="inline-block mb-0">
                             <h4 class="font-poppins text-[35px] font-semibold capitalize tracking-[-2px] text-gold leading-tight">Resepsi</h4>
                             <div class="w-1/2 h-[2px] bg-white my-6"></div>
                         </div>
                         <div class="font-poppins text-white space-y-2">
-                            <p class="font-bold tracking-widest uppercase text-sm font-poppins">{{ !empty($data['event']['date']) ? \Carbon\Carbon::parse($data['event']['date'])->translatedFormat('l, d F Y') : 'SABTU, 01 AGUSTUS 2026' }}</p>
+                            <p class="font-bold tracking-widest uppercase text-sm font-poppins">{{ !empty($data['event']['date_resepsi']) ? \Carbon\Carbon::parse($data['event']['date_resepsi'])->translatedFormat('l, d F Y') : (!empty($data['event']['date']) ? \Carbon\Carbon::parse($data['event']['date'])->translatedFormat('l, d F Y') : 'SABTU, 01 AGUSTUS 2026') }}</p>
                             <p class="text-xs opacity-80">PUKUL : {{ $data['event']['time_resepsi'] ?? '10:00' }} WIB - SELESAI</p>
                             <div class="pt-4">
                                 <p class="text-[13px] font-medium">Tempat : <span class="font-bold">{{ $data['event']['location_resepsi_name'] ?? ($data['event']['location'] ?? 'Kediaman Mempelai Wanita') }}</span></p>
@@ -385,14 +385,14 @@
                         </div>
                     </div>
 
-                    <!-- Akad Nikah (Right Aligned) -->
+                    <!-- Akad Nikah -->
                     <div class="text-right" data-aos="fade-left" data-aos-delay="1600" data-aos-duration="2500">
                         <div class="inline-block mb-0">
                             <h4 class="font-poppins text-[35px] font-semibold capitalize tracking-[-2px] text-gold leading-tight">Akad Nikah</h4>
                             <div class="w-1/2 h-[2px] bg-white my-6 ml-auto"></div>
                         </div>
                         <div class="font-poppins text-white space-y-2">
-                            <p class="font-bold tracking-widest uppercase text-sm font-poppins">{{ !empty($data['event']['date']) ? \Carbon\Carbon::parse($data['event']['date'])->translatedFormat('l, d F Y') : 'MINGGU, 16 AGUSTUS 2026' }}</p>
+                            <p class="font-bold tracking-widest uppercase text-sm font-poppins">{{ !empty($data['event']['date_akad']) ? \Carbon\Carbon::parse($data['event']['date_akad'])->translatedFormat('l, d F Y') : (!empty($data['event']['date']) ? \Carbon\Carbon::parse($data['event']['date'])->translatedFormat('l, d F Y') : 'MINGGU, 16 AGUSTUS 2026') }}</p>
                             <p class="text-xs opacity-80">PUKUL : {{ $data['event']['time_akad'] ?? '08:00' }} WIB</p>
                             <div class="pt-4 text-right">
                                 <p class="text-[13px] font-medium">Tempat : <span class="font-bold">{{ $data['event']['location_akad_name'] ?? ($data['event']['location'] ?? 'Kediaman Mempelai Wanita') }}</span></p>

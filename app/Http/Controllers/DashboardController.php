@@ -28,8 +28,10 @@ class DashboardController extends Controller
         $content['bride']['name'] = $request->input('bride_name');
         $content['bride']['parents'] = $request->input('bride_parents');
         
-        $content['event']['date'] = $request->input('event_date');
-        $content['event']['date_hijri'] = $request->input('event_date_hijri');
+        $content['event']['date'] = $request->input('event_date', $content['event']['date'] ?? null);
+        $content['event']['date_akad'] = $request->input('event_date_akad', $content['event']['date_akad'] ?? null);
+        $content['event']['date_resepsi'] = $request->input('event_date_resepsi', $content['event']['date_resepsi'] ?? null);
+        $content['event']['date_hijri'] = $request->input('event_date_hijri', $content['event']['date_hijri'] ?? null);
         
         $content['event']['time_akad'] = $request->input('event_time_akad');
         $content['event']['location_akad_name'] = $request->input('event_location_akad_name');
