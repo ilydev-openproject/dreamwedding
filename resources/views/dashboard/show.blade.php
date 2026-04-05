@@ -77,6 +77,21 @@
             newName: '',
             newPhone: '',
             search: '',
+            
+            get countdownStatus() {
+                const inputDate = document.querySelector('input[name="event_date"]')?.value;
+                if (!inputDate) return 'Belum diatur';
+                
+                const target = new Date(inputDate).getTime();
+                const now = new Date().setHours(0,0,0,0);
+                const diff = target - now;
+                const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
+                
+                if (days > 0) return `Kurang ${days} Hari lagi`;
+                if (days === 0) return 'Hari H Acara!';
+                return `Acara sudah lewat ${Math.abs(days)} hari`;
+            },
+            
             init() {
                 if (window.location.hash) {
                     this.activeTab = window.location.hash.slice(1);
@@ -401,8 +416,16 @@ Terima Kasih.
                                 <div class="space-y-4">
                                     <div>
                                         <label class="block text-sm font-semibold text-gray-700 mb-1">Tanggal Utama (Patokan Countdown)</label>
-                                        <input type="date" name="event_date" value="{{ $invitation->content['event']['date'] ?? '' }}" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none hover:bg-white transition-all shadow-sm">
-                                        <p class="text-[10px] text-gray-400 mt-1 italic">*Gunakan tanggal termuda (paling awal) atau hari H acara besar Bos.</p>
+                                        <input type="date" name="event_date" 
+                                               value="{{ $invitation->content['event']['date'] ?? '' }}" 
+                                               @input="$dispatch('input')"
+                                               class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none hover:bg-white transition-all shadow-sm">
+                                        
+                                        <!-- Live Status Badge -->
+                                        <div class="mt-2 flex items-center gap-2">
+                                            <span class="text-[10px] font-bold uppercase px-2 py-1 rounded bg-indigo-100 text-indigo-700" x-text="countdownStatus"></span>
+                                            <p class="text-[10px] text-gray-400 italic">*Pilih tanggal yang benar agar H- acara akurat.</p>
+                                        </div>
                                     </div>
                                     <div>
                                         <label class="block text-sm font-semibold text-gray-700 mb-1">Tanggal (Hijriah/Opsional)</label>
