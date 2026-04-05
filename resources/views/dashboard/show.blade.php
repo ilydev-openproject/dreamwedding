@@ -115,8 +115,6 @@
             removeGuest(index) {
                 this.guests.splice(index, 1);
             },
-            removeHero(index) {
-                this.hero_images.splice(index, 1);
             sendWA(guest) {
                 const guestUrl = `${this.inviteUrl}?to=${encodeURIComponent(guest.name)}`;
                 const bride = @json($invitation->content['bride']['name'] ?? 'Bride');
@@ -149,7 +147,7 @@ Terima Kasih.
                 
                 let waLink = `https://wa.me/?text=${textOutput}`;
                 if (guest.phone) {
-                    const cleanPhone = guest.phone.replace(/\D/g, '');
+                    const cleanPhone = (guest.phone || '').toString().replace(/\D/g, '');
                     const finalPhone = cleanPhone.startsWith('0') ? '62' + cleanPhone.slice(1) : cleanPhone;
                     waLink = `https://wa.me/${finalPhone}?text=${textOutput}`;
                 }
