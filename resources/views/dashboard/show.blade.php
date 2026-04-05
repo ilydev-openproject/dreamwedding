@@ -117,20 +117,15 @@
             },
             removeHero(index) {
                 this.hero_images.splice(index, 1);
-            },
-            removeGallery(index) {
-                this.gallery_images.splice(index, 1);
-            },
             sendWA(guest) {
                 const guestUrl = `${this.inviteUrl}?to=${encodeURIComponent(guest.name)}`;
                 const bride = @json($invitation->content['bride']['name'] ?? 'Bride');
                 const groom = @json($invitation->content['groom']['name'] ?? 'Groom');
                 
-                // Jurus paling sakti: Pakai Surrogate Pair (UTF-16)
-                const emoji = '\uD83D\uDCE9';
-                const message = `*${emoji} UNDANGAN PERNIKAHAN ${emoji}*
-
-*Kepada Yth.*
+                // Jurus Pamungkas: Pisahkan part yang bermasalah dalam kode HEX URL murni
+                const subject = '%F0%9F%93%A9%20UNDANGAN%20PERNIKAHAN%20%F0%9F%93%A9';
+                
+                const messageBody = `*Kepada Yth.*
 *Bapak/Ibu/Saudara/i*
 *${guest.name}*
 
@@ -141,22 +136,25 @@ Dengan memohon rahmat dan ridho Allah SWT, perkenankan kami mengundang Bapak/Ibu
 Untuk informasi detail mengenai acara, silahkan kunjungi link :
 ${guestUrl}
 
-Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan untuk hadir dan memberikan doa restu.
-
-Atas kehadiran dan doa restunya kami ucapkan banyak terima kasih.
+Merupakan suatu kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu kepada kami.
 
 Wassalamualaikum Warahmatullahi Wabarakatuh
 
-*💍*
-*Wedding e-Invitation ini merupakan undangan resmi dari kami, karena jarak & waktu kami mohon maaf apabila mengirim undangan melalui media online. Semoga tidak mengurangi rasa hormat, makna, serta isinya 💍*
+Terima Kasih.
 
-Hormat kami,
+*Kami yang berbahagia,*
 *${groom} & ${bride}*`;
 
-                const text = encodeURIComponent(message);
-                const cleanPhone = guest.phone.replace(/\D/g, '');
-                const finalPhone = cleanPhone.startsWith('0') ? '62' + cleanPhone.slice(1) : cleanPhone;
-                window.open(`https://wa.me/${finalPhone}?text=${text}`, '_blank');
+                const textOutput = subject + '%0A%0A' + encodeURIComponent(messageBody);
+                
+                let waLink = `https://wa.me/?text=${textOutput}`;
+                if (guest.phone) {
+                    const cleanPhone = guest.phone.replace(/\D/g, '');
+                    const finalPhone = cleanPhone.startsWith('0') ? '62' + cleanPhone.slice(1) : cleanPhone;
+                    waLink = `https://wa.me/${finalPhone}?text=${textOutput}`;
+                }
+                
+                window.open(waLink, '_blank');
             }
         }
     }
