@@ -328,7 +328,7 @@
                     <!-- Countdown -->
                     <div class="grid grid-cols-4 gap-4 font-poppins text-white" data-aos="fade-up" data-aos-delay="800" data-aos-duration="2500" x-data="{
                         days: 0, hours: 0, minutes: 0, seconds: 0,
-                        target: new Date('{{ $data['event']['date'] ?? '2026-08-16' }} {{ $data['event']['time_resepsi'] ?? '10:00' }}').getTime(),
+                        target: new Date('{{ $data['event']['date'] ?? '2026-08-16' }} {{ $data['event']['time_akad'] ?? '08:00' }}').getTime(),
                         init() {
                             setInterval(() => {
                                 let now = new Date().getTime();
@@ -365,40 +365,40 @@
 
                 <!-- Event Details Section -->
                 <div class="space-y-16">
-                    <!-- Resepsi -->
+                    <!-- Akad Nikah -->
                     <div class="text-left" data-aos="fade-right" data-aos-delay="1200" data-aos-duration="2500">
                         <div class="inline-block mb-0">
-                            <h4 class="font-poppins text-[35px] font-semibold capitalize tracking-[-2px] text-gold leading-tight">Resepsi</h4>
+                            <h4 class="font-poppins text-[35px] font-semibold capitalize tracking-[-2px] text-gold leading-tight">Akad Nikah</h4>
                             <div class="w-1/2 h-[2px] bg-white my-6"></div>
                         </div>
                         <div class="font-poppins text-white space-y-2">
-                            <p class="font-bold tracking-widest uppercase text-sm font-poppins">{{ !empty($data['event']['date_resepsi']) ? \Carbon\Carbon::parse($data['event']['date_resepsi'])->translatedFormat('l, d F Y') : (!empty($data['event']['date']) ? \Carbon\Carbon::parse($data['event']['date'])->translatedFormat('l, d F Y') : 'SABTU, 01 AGUSTUS 2026') }}</p>
-                            <p class="text-xs opacity-80">PUKUL : {{ $data['event']['time_resepsi'] ?? '10:00' }} WIB - SELESAI</p>
+                            <p class="font-bold tracking-widest uppercase text-sm font-poppins">{{ !empty($data['event']['date_akad']) ? \Carbon\Carbon::parse($data['event']['date_akad'])->translatedFormat('l, d F Y') : (!empty($data['event']['date']) ? \Carbon\Carbon::parse($data['event']['date'])->translatedFormat('l, d F Y') : 'MINGGU, 16 AGUSTUS 2026') }}</p>
+                            <p class="text-xs opacity-80">PUKUL : {{ $data['event']['time_akad'] ?? '08:00' }} WIB</p>
                             <div class="pt-4">
-                                <p class="text-[13px] font-medium">Tempat : <span class="font-bold">{{ $data['event']['location_resepsi_name'] ?? ($data['event']['location'] ?? 'Kediaman Mempelai Wanita') }}</span></p>
-                                <p class="text-[12px] opacity-85 leading-relaxed">{{ $data['event']['location_resepsi_detail'] ?? ($data['event']['address'] ?? 'Ds Pagu, Wates, Kediri, Jawa Timur') }}</p>
+                                <p class="text-[13px] font-medium">Tempat : <span class="font-bold">{{ $data['event']['location_akad_name'] ?? ($data['event']['location'] ?? 'Kediaman Mempelai Wanita') }}</span></p>
+                                <p class="text-[12px] opacity-85 leading-relaxed">{{ $data['event']['location_akad_detail'] ?? ($data['event']['address'] ?? 'Ds Pagu, Wates, Kediri, Jawa Timur') }}</p>
                             </div>
-                            <a href="{{ $data['event']['maps_resepsi'] ?? ($data['event']['google_maps_link'] ?? '#') }}" 
+                            <a href="{{ $data['event']['maps_akad'] ?? ($data['event']['google_maps_link'] ?? '#') }}" 
                                class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full border border-white/20 text-xs font-poppins mt-4 hover:bg-white/20 transition-all">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gold"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg> Lokasi Acara
                             </a>
                         </div>
                     </div>
 
-                    <!-- Akad Nikah -->
+                    <!-- Resepsi -->
                     <div class="text-right" data-aos="fade-left" data-aos-delay="1600" data-aos-duration="2500">
                         <div class="inline-block mb-0">
-                            <h4 class="font-poppins text-[35px] font-semibold capitalize tracking-[-2px] text-gold leading-tight">Akad Nikah</h4>
+                            <h4 class="font-poppins text-[35px] font-semibold capitalize tracking-[-2px] text-gold leading-tight">Resepsi</h4>
                             <div class="w-1/2 h-[2px] bg-white my-6 ml-auto"></div>
                         </div>
                         <div class="font-poppins text-white space-y-2">
-                            <p class="font-bold tracking-widest uppercase text-sm font-poppins">{{ !empty($data['event']['date_akad']) ? \Carbon\Carbon::parse($data['event']['date_akad'])->translatedFormat('l, d F Y') : (!empty($data['event']['date']) ? \Carbon\Carbon::parse($data['event']['date'])->translatedFormat('l, d F Y') : 'MINGGU, 16 AGUSTUS 2026') }}</p>
-                            <p class="text-xs opacity-80">PUKUL : {{ $data['event']['time_akad'] ?? '08:00' }} WIB</p>
+                            <p class="font-bold tracking-widest uppercase text-sm font-poppins">{{ !empty($data['event']['date_resepsi']) ? \Carbon\Carbon::parse($data['event']['date_resepsi'])->translatedFormat('l, d F Y') : (!empty($data['event']['date']) ? \Carbon\Carbon::parse($data['event']['date'])->translatedFormat('l, d F Y') : 'SABTU, 01 AGUSTUS 2026') }}</p>
+                            <p class="text-xs opacity-80">PUKUL : {{ $data['event']['time_resepsi'] ?? '10:00' }} WIB - SELESAI</p>
                             <div class="pt-4 text-right">
-                                <p class="text-[13px] font-medium">Tempat : <span class="font-bold">{{ $data['event']['location_akad_name'] ?? ($data['event']['location'] ?? 'Kediaman Mempelai Wanita') }}</span></p>
-                                <p class="text-[12px] opacity-85 leading-relaxed text-right">{{ $data['event']['location_akad_detail'] ?? ($data['event']['address'] ?? 'Ds Pagu, Wates, Kediri, Jawa Timur') }}</p>
+                                <p class="text-[13px] font-medium">Tempat : <span class="font-bold">{{ $data['event']['location_resepsi_name'] ?? ($data['event']['location'] ?? 'Kediaman Mempelai Wanita') }}</span></p>
+                                <p class="text-[12px] opacity-85 leading-relaxed text-right">{{ $data['event']['location_resepsi_detail'] ?? ($data['event']['address'] ?? 'Ds Pagu, Wates, Kediri, Jawa Timur') }}</p>
                             </div>
-                            <a href="{{ $data['event']['maps_akad'] ?? ($data['event']['google_maps_link'] ?? '#') }}" 
+                            <a href="{{ $data['event']['maps_resepsi'] ?? ($data['event']['google_maps_link'] ?? '#') }}" 
                                class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full border border-white/20 text-xs font-poppins mt-4 hover:bg-white/20 transition-all">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gold"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg> Lokasi Acara
                             </a>
